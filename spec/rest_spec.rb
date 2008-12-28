@@ -51,8 +51,8 @@ class Person
     return @@people
   end
 
-  def self.first(id)
-    #puts "first(#{id})"
+  def self.find_by_id(id)
+    #puts "find_by_id #{id}"
     all.find {|f| f.id == id.to_i}
   end
 

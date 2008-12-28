@@ -9,6 +9,14 @@ class Object
   end
 end
 
+module Stone
+  module Resource
+    def find_by_id(id)
+      get(id)
+    end
+  end
+end
+
 module Sinatra
   module REST
 
@@ -83,17 +91,17 @@ module Sinatra
 
         # show GET /models/1
         def show
-          @#{singular} = #{model}.first(params[:id])
+          @#{singular} = #{model}.find_by_id(params[:id])
         end
 
         # edit GET /models/1/edit
         def edit
-          @#{singular} = #{model}.first(params[:id])
+          @#{singular} = #{model}.find_by_id(params[:id])
         end
 
         # update PUT /models/1
         def update
-          @#{singular} = #{model}.first(params[:id])
+          @#{singular} = #{model}.find_by_id(params[:id])
           @#{singular}.update_attributes(params)
         end
 

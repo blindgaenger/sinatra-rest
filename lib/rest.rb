@@ -136,16 +136,14 @@ module Sinatra
         # create POST /models
         post '/#{plural}' do
           create
-
-          redirect url_for_#{plural}_show(@#{singular}), 'resource created'
+          redirect url_for_#{plural}_show(@#{singular}), '#{singular} created'
         end
 
         # show GET /models/1
         get '/#{plural}/:id' do
           show
-
           if @#{singular}.nil?
-            throw :halt, [404, 'resource not found']
+            throw :halt, [404, '#{singular} not found']
           else
             #{renderer.to_s} :"#{plural}/show", options
           end
@@ -160,13 +158,13 @@ module Sinatra
         # update PUT /models/1
         put '/#{plural}/:id' do
           update
-          redirect url_for_#{plural}_show(@#{singular}), 'resource updated'
+          redirect url_for_#{plural}_show(@#{singular}), '#{singular} updated'
         end
 
         # destroy DELETE /models/1
         delete '/#{plural}/:id' do
           destroy
-          redirect url_for_#{plural}_index, 'resource deleted'
+          redirect url_for_#{plural}_index, '#{singular} deleted'
         end
       XXX
 

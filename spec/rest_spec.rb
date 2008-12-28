@@ -6,15 +6,14 @@ require 'lib/rest'
 require "rexml/document"
 require 'ruby-debug'
 
-#require 'spec/person'
-
-
+#
+# kind of a 'minimal model'
 class Person
   attr_accessor :id
   attr_accessor :name
 
   def initialize(*args)
-    puts "new #{args.inspect}"
+    #puts "new #{args.inspect}"
     if args.size == 0
       @id = nil
       @name = nil
@@ -27,13 +26,13 @@ class Person
   end
 
   def save
-    puts "save #{@id}"
+    #puts "save #{@id}"
     @@people << self
     self.id = @@people.size
   end
 
   def update_attributes(hash)
-    puts "update_attributes #{hash.inspect}"
+    #puts "update_attributes #{hash.inspect}"
     unless hash.empty?
       @id = hash['id'].to_i if hash.include?('id')
       @name = hash['name'] if hash.include?('name')
@@ -41,23 +40,24 @@ class Person
   end
 
   def self.delete(id)
+    #puts "delete #{id}"
     @@people.delete_if {|person| person.id == id.to_i}
   end
 
   @@people = nil
 
   def self.all
-    puts 'all'
+    #puts 'all'
     return @@people
   end
 
   def self.first(id)
-    puts "first(#{id})"
+    #puts "first(#{id})"
     all.find {|f| f.id == id.to_i}
   end
 
   def self.reset!
-    puts 'reset!'
+    #puts 'reset!'
     @@people = [
       Person.new(1, 'one'),
       Person.new(2, 'two'),
@@ -66,19 +66,10 @@ class Person
   end
 end
 
-class SomePerson
-end
-
-module MyModule
-  class ModulePerson
-  end
-end
-
 
 def doc(xml)
   REXML::Document.new(xml.gsub(/>\s+</, '><').strip)
 end
-
 
 def response_should_be(status, body)
   @response.status.should == status
@@ -89,26 +80,31 @@ def model_should_be(size)
   Person.all.size.should == size
 end
 
+
 describe Sinatra::REST do
 
-  describe 'as code generator' do
+  describe 'as inflection generator' do
     it "should conjugate a simple model name" do
       Sinatra::REST.conjugate(Person).should eql(%w(Person person people))
     end
 
     it "should conjugate a model name in camel cases" do
-      Sinatra::REST.conjugate(SomePerson).should eql(%w(SomePerson some_person some_people))
+      Sinatra::REST.conjugate('SomePerson').should eql(%w(SomePerson some_person some_people))
     end
 
-    it "should conjugate a model name inside a module" do
-      Sinatra::REST.conjugate(MyModule::ModulePerson).should eql(%w(ModulePerson module_person module_people))
+    it "should conjugate a model name without module" do
+      Sinatra::REST.conjugate('MyModule::ModulePerson').should eql(%w(ModulePerson module_person module_people))
     end
   end
 
 
-  describe 'as url generator' do
-
-    it 'should add url_for helper methods' do
+  describe 'as route generator' do
+    before(:each) do
+      Sinatra.application = nil
+      @app = Sinatra.application
+    end
+  
+    it 'should add url_for_* helpers' do
       rest Person
 
       methods = Sinatra::EventContext.instance_methods.grep /^url_for_people_/
@@ -130,20 +126,10 @@ describe Sinatra::REST do
       context.url_for_people_destroy(@person).should == '/people/99'
     end
 
-  end
-
-
-  describe 'as route generator' do
-
-    before(:each) do
-      Sinatra.application = nil
-      @app = Sinatra.application
+    it 'should add restful routes' do
       @app.events.clear
-    end
-
-    it 'should add restful routes for a model' do
       rest Person
-      events = Sinatra.application.events
+      events = @app.events
 
       events[:get].size.should be(4)
       events[:get][0].path.should == '/people'
@@ -160,7 +146,6 @@ describe Sinatra::REST do
       events[:delete].size.should be(1)
       events[:delete][0].path.should == '/people/:id'
     end
-
   end
 
 
@@ -176,136 +161,134 @@ describe Sinatra::REST do
       Person.reset!
       rest Person, :renderer => 'erb'
     end
-#
-#    # index GET /models
-#    it 'should list all people on index by their id' do
-#      get_it '/people'
-#      body.gsub(/>\s+</, '><').strip.should == '<people><person><id>1</id></person><person><id>2</id></person><person><id>3</id></person></people>'
-#    end
+    
+    describe 'each method' do
 
-#    # new GET /models/new
-#    it 'should prepare an empty item on new' do
-#      get_it '/people/new'
-#      body.gsub(/>\s+</, '><').strip.should == '<person><id></id><name></name></person>'
-#    end
-#
-#    # create POST /models
-#    it 'should create an item on post' do
-#      post_it '/people', '<person><name></name></person>', :content_type => 'application/xml'
-#      doc(body).to_s.should == ''
-#    end
-#
-#    # show GET /models/1
-#    it 'should show an item on get' do
-#      get_it '/people/1'
-#      body.gsub(/>\s+</, '><').strip.should == '<person><id>1</id><name>one</name></person>'
-#    end
+      # index GET /models
+      it 'should list all people on index by their id' do
+        get_it '/people'
+        response_should_be 200, '<people><person><id>1</id></person><person><id>2</id></person><person><id>3</id></person></people>'
+      end
 
-#    # edit GET /models/1/edit
-#    it 'should get the item for editing' do
-#      get_it '/people/1/edit'
-#      body.gsub(/>\s+</, '><').strip.should == '<person><id>1</id><name>one</name></person>'
-#    end
+      # new GET /models/new
+      it 'should prepare an empty item on new' do
+        get_it '/people/new'
+        response_should_be 200, '<person><id/><name/></person>'
+      end
 
-#    # update PUT /models/1
-#    it 'should update an item on put' do
-#      post_it '/people', '<person><name></name></person>', :content_type => 'application/xml'
-#      doc(body).to_s.should == ''
-#    end
+      # create POST /models
+      it 'should create an item on post' do
+        post_it '/people', :name => 'new resource'
+        response_should_be 302, 'person created'
+      end
 
-#    # destroy DELETE /models/1
-#    it 'should destroy an item on delete' do
-#      post_it '/people', '<person><id>1</id></person>', :content_type => 'application/xml'
-#      doc(body).to_s.should == ''
-#    end
+      # show GET /models/1
+      it 'should show an item on get' do
+        get_it '/people/1'
+        response_should_be 200, '<person><id>1</id><name>one</name></person>'
+      end
 
-  #######################
+      # edit GET /models/1/edit
+      it 'should get the item for editing' do
+        get_it '/people/1/edit'
+        response_should_be 200, '<person><id>1</id><name>one</name></person>'
+      end
 
-    it 'list all persons' do
-      get_it '/people'
-      response_should_be 200, '<people><person><id>1</id></person><person><id>2</id></person><person><id>3</id></person></people>'
-      model_should_be 3
+      # update PUT /models/1
+      it 'should update an item on put' do
+        put_it '/people/1', :name => 'another name'
+        response_should_be 302, 'person updated'
+      end
+
+      # destroy DELETE /models/1
+      it 'should destroy an item on delete' do
+        delete_it '/people/1'
+        response_should_be 302, 'person deleted'
+      end
+
     end
 
-    it 'read all persons' do
-      get_it '/people'
+    describe 'some use cases' do
 
-      el_people = doc(body).elements.to_a("*/person/id")
-      el_people.size.should == 3
-      model_should_be 3
+      it 'list all persons' do
+        get_it '/people'
+        response_should_be 200, '<people><person><id>1</id></person><person><id>2</id></person><person><id>3</id></person></people>'
+        model_should_be 3
+      end
 
-      get_it "/people/#{el_people[0].text}"
-      response_should_be 200, '<person><id>1</id><name>one</name></person>'
-      model_should_be 3
+      it 'read all persons' do
+        get_it '/people'
 
-      get_it "/people/#{el_people[1].text}"
-      response_should_be 200, '<person><id>2</id><name>two</name></person>'
-      model_should_be 3
+        el_people = doc(body).elements.to_a("*/person/id")
+        el_people.size.should == 3
+        model_should_be 3
 
-      get_it "/people/#{el_people[2].text}"
-      response_should_be 200, '<person><id>3</id><name>three</name></person>'
-      model_should_be 3      
-    end
+        get_it "/people/#{el_people[0].text}"
+        response_should_be 200, '<person><id>1</id><name>one</name></person>'
+        model_should_be 3
 
-    it 'create a new person' do
-      get_it '/people'
-      response_should_be 200, '<people><person><id>1</id></person><person><id>2</id></person><person><id>3</id></person></people>'
-      model_should_be 3
+        get_it "/people/#{el_people[1].text}"
+        response_should_be 200, '<person><id>2</id><name>two</name></person>'
+        model_should_be 3
 
-      get_it '/people/new'
-      response_should_be 200, '<person><id/><name/></person>'
-      model_should_be 3
+        get_it "/people/#{el_people[2].text}"
+        response_should_be 200, '<person><id>3</id><name>three</name></person>'
+        model_should_be 3      
+      end
 
-      post_it '/people', {:name => 'four'}
-      response_should_be 302, 'resource created'
-      model_should_be 4
+      it 'create a new person' do
+        get_it '/people'
+        response_should_be 200, '<people><person><id>1</id></person><person><id>2</id></person><person><id>3</id></person></people>'
+        model_should_be 3
 
-      get_it '/people'
-      response_should_be 200, '<people><person><id>1</id></person><person><id>2</id></person><person><id>3</id></person><person><id>4</id></person></people>'
-      model_should_be 4
-    end
+        get_it '/people/new'
+        response_should_be 200, '<person><id/><name/></person>'
+        model_should_be 3
 
-    it 'update a person' do
-      get_it '/people/2'
-      response_should_be 200, '<person><id>2</id><name>two</name></person>'
-      model_should_be 3
+        post_it '/people', {:name => 'four'}
+        response_should_be 302, 'person created'
+        model_should_be 4
 
-      put_it '/people/2', {:name => 'tomorrow'}
-      response_should_be 302, 'resource updated'
-      model_should_be 3
+        get_it '/people'
+        response_should_be 200, '<people><person><id>1</id></person><person><id>2</id></person><person><id>3</id></person><person><id>4</id></person></people>'
+        model_should_be 4
+      end
 
-      get_it '/people/2'
-      response_should_be 200, '<person><id>2</id><name>tomorrow</name></person>'
-      model_should_be 3
-    end
+      it 'update a person' do
+        get_it '/people/2'
+        response_should_be 200, '<person><id>2</id><name>two</name></person>'
+        model_should_be 3
 
-    it 'delete a person' do
-      get_it '/people'
-      response_should_be 200, '<people><person><id>1</id></person><person><id>2</id></person><person><id>3</id></person></people>'
-      model_should_be 3
+        put_it '/people/2', {:name => 'tomorrow'}
+        response_should_be 302, 'person updated'
+        model_should_be 3
 
-      delete_it '/people/2'
-      response_should_be 302, 'resource deleted'
-      model_should_be 2
+        get_it '/people/2'
+        response_should_be 200, '<person><id>2</id><name>tomorrow</name></person>'
+        model_should_be 3
+      end
 
-      get_it '/people'
-      response_should_be 200, '<people><person><id>1</id></person><person><id>3</id></person></people>'
-      model_should_be 2
+      it 'delete a person' do
+        get_it '/people'
+        response_should_be 200, '<people><person><id>1</id></person><person><id>2</id></person><person><id>3</id></person></people>'
+        model_should_be 3
 
-      get_it '/people/2'
-      response_should_be 404, 'resource not found'
-      model_should_be 2
+        delete_it '/people/2'
+        response_should_be 302, 'person deleted'
+        model_should_be 2
+
+        get_it '/people'
+        response_should_be 200, '<people><person><id>1</id></person><person><id>3</id></person></people>'
+        model_should_be 2
+
+        get_it '/people/2'
+        response_should_be 404, 'person not found'
+        model_should_be 2
+      end
+
     end
 
   end
-
-#    it 'should service restful clients' do
-#      require 'rest_client'
-#      RestClient.get 'http://example.com/person'
-#      RestClient.get 'https://user:password@example.com/private/person'
-#      RestClient.post 'http://example.com/person', :param1 => 'one', :nested => { :param2 => 'two' }
-#      RestClient.delete 'http://example.com/person'
-#    end
 
 end
 

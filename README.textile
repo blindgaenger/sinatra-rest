@@ -45,15 +45,15 @@ As you can see, each route is also associated with a named code block in the
 controller. The controller does the minimum to make the routes work. Based on 
 the route it treates the model and redirects or renders the expected view.
 
-So let's imagine the following steps to show a single person:
+So imagine the following steps to show a single person:
 
-  # request from the client's browser
+# request from the client's browser<br/>
   GET http://localhost:4567/people/99
   
-  # Find and set @person in the controller
+# Find and set @person in the controller<br/>
   @person = Person.find_by_id(99)
   
-  # render the view to display @person
+# render the view to display @person<br/>
   render @VIEW_DIR@/people/show.haml
 
 It's up to you to provide the views, because this goes beyond the restful 
@@ -61,14 +61,12 @@ routing. The variable @@person@ is correctly named and injected into the view.
 So maybe you'd like to do something like this:
 
 <pre><code>
-
   <html>
   <body>
     <div>ID: <%= @person.id %></div>
     <div>Name: <%= @person.name %></div>
   </body>
   </html>
-
 </code></pre>
 
 That's it!

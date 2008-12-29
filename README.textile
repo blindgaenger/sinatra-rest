@@ -1,0 +1,81 @@
+h1. Sinatra-REST
+
+Actually it's a set of templates to introduce RESTful routes in Sinatra. The 
+only thing for you to do is to provide the views behind the routes.
+
+
+h2. Installation
+
+Guess what!
+
+  sudo gem source --add http://gems.github.com
+  sudo gem install blindgaenger-sinatra-rest
+
+
+h2. Usage
+
+Of course you need to require the gem in your sinatra application:
+
+  require 'rubygems'
+  require 'sinatra'
+  require 'rest'
+
+It's very similar to defining routes in Sinatra (@get@, @post@, ...). But this 
+time you don't define the routes by yourself, but use the model's name for 
+convention.
+
+For example, if the model's class is called @Person@ you only need to add this 
+line:
+
+  rest Person
+  
+Which will add the following RESTful routes to your application. (Note the 
+pluralization of @Person@ to the @/people/*@ routes.)
+
+|_. Verb |_. Route        |_. Controller |_. View             |
+| GET    | /people        | index        | /people/index.haml |
+| GET    | /people/new    | new          | /people/new.haml   |
+| POST   | /people        | create       | -none-             |
+| GET    | /people/1      | show         | /people/show.haml  |
+| GET    | /people/1/edit | edit         | /people/edit.haml  |
+| PUT    | /people/1      | update       | -none-             |
+| DELETE | /people/1      | destroy      | -none-             |
+
+As you can see, each route is also associated with a named code block in the 
+controller. The controller does the minimum to make the routes work. Based on 
+the route it treates the model and redirects or renders the expected view.
+
+So let's imagine the following steps to show a single person:
+
+  # request from the client's browser
+  GET http://localhost:4567/people/99
+  
+  # Find and set @person in the controller
+  @person = Person.find_by_id(99)
+  
+  # render the view to display @person
+  render @VIEW_DIR@/people/show.haml
+
+It's up to you to provide the views, because this goes beyond the restful 
+routing. The variable @@person@ is correctly named and injected into the view. 
+So maybe you'd like to do something like this:
+
+<pre><code>
+
+  <html>
+  <body>
+    <div>ID: <%= @person.id %></div>
+    <div>Name: <%= @person.name %></div>
+  </body>
+  </html>
+
+</code></pre>
+
+That's it!
+
+
+h2. Contact
+
+You can contact me via mail at blindgaenger at gmail dot com, or leave me a 
+message on my "Github profile":http://github.com/blindgaenger.
+

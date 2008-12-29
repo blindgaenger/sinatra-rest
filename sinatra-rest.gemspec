@@ -1,5 +1,4 @@
-require 'rubygems'
-spec = Gem::Specification.new do |s|
+Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.name = "sinatra-rest"
   s.version = "0.1"
@@ -24,10 +23,5 @@ spec = Gem::Specification.new do |s|
   s.add_dependency "english", [">= 0.3.1"]
 
   s.has_rdoc = "false"
-end
-
-if $0 == __FILE__
-  Gem::manage_gems
-  Gem::Builder.new(spec).build
 end
 

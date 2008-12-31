@@ -88,6 +88,10 @@ describe Sinatra::REST do
       Sinatra::REST.conjugate(Person).should eql(%w(Person person people))
     end
 
+    it "should conjugate a String as model name" do
+      Sinatra::REST.conjugate('Person').should eql(%w(Person person people))
+    end
+
     it "should conjugate a model name in camel cases" do
       Sinatra::REST.conjugate('SomePerson').should eql(%w(SomePerson some_person some_people))
     end
@@ -99,12 +103,71 @@ describe Sinatra::REST do
 
 
   describe 'as route generator' do
+
     before(:each) do
       Sinatra.application = nil
       @app = Sinatra.application
     end
-  
-    it 'should add url_for_* helpers' do
+
+
+    it 'should not add editable url_for_* helpers' do
+      rest Person, :editable => false
+
+      methods = Sinatra::EventContext.instance_methods.grep /^url_for_people_/
+      methods.size.should == 2
+
+      response_mock = mock "Response"
+      response_mock.should_receive(:"body=").with(nil).and_return(nil)
+      context = Sinatra::EventContext.new(nil, response_mock, nil)
+
+      @person = Person.new
+      @person.id = 99
+
+      context.url_for_people_index.should == '/people'
+      context.url_for_people_show(@person).should == '/people/99'
+    end
+
+    it 'should not add editable restful routes' do
+      @app.events.clear
+      rest Person, :editable => false
+      @app.events[:get].map {|r| r.path}.should == ["/people", "/people/:id"]
+      @app.events[:post].map {|r| r.path}.should == []
+      @app.events[:put].map {|r| r.path}.should == []
+      @app.events[:delete].map {|r| r.path}.should == []
+    end
+
+
+    it 'should not add inputable url_for_* helpers' do
+      rest Person, :inputable => false
+
+      methods = Sinatra::EventContext.instance_methods.grep /^url_for_people_/
+      methods.size.should == 5
+
+      response_mock = mock "Response"
+      response_mock.should_receive(:"body=").with(nil).and_return(nil)
+      context = Sinatra::EventContext.new(nil, response_mock, nil)
+
+      @person = Person.new
+      @person.id = 99
+
+      context.url_for_people_index.should == '/people'
+      context.url_for_people_create.should == '/people'
+      context.url_for_people_show(@person).should == '/people/99'
+      context.url_for_people_update(@person).should == '/people/99'
+      context.url_for_people_destroy(@person).should == '/people/99'
+    end
+
+    it 'should not add inputable restful routes' do
+      @app.events.clear
+      rest Person, :inputable => false
+      @app.events[:get].map {|r| r.path}.should == ["/people", "/people/:id"]
+      @app.events[:post].map {|r| r.path}.should == ["/people"]
+      @app.events[:put].map {|r| r.path}.should == ["/people/:id"]
+      @app.events[:delete].map {|r| r.path}.should == ["/people/:id"]
+    end
+
+
+    it 'should add all url_for_* helpers' do
       rest Person
 
       methods = Sinatra::EventContext.instance_methods.grep /^url_for_people_/
@@ -126,25 +189,13 @@ describe Sinatra::REST do
       context.url_for_people_destroy(@person).should == '/people/99'
     end
 
-    it 'should add restful routes' do
+    it 'should add all restful routes' do
       @app.events.clear
       rest Person
-      events = @app.events
-
-      events[:get].size.should be(4)
-      events[:get][0].path.should == '/people'
-      events[:get][1].path.should == '/people/new'
-      events[:get][2].path.should == '/people/:id'
-      events[:get][3].path.should == '/people/:id/edit'
-
-      events[:post].size.should be(1)
-      events[:post][0].path.should == '/people'
-
-      events[:put].size.should be(1)
-      events[:put][0].path.should == '/people/:id'
-
-      events[:delete].size.should be(1)
-      events[:delete][0].path.should == '/people/:id'
+      @app.events[:get].map {|r| r.path}.should == ["/people", "/people/new", "/people/:id", "/people/:id/edit"]
+      @app.events[:post].map {|r| r.path}.should == ["/people"]
+      @app.events[:put].map {|r| r.path}.should == ["/people/:id"]
+      @app.events[:delete].map {|r| r.path}.should == ["/people/:id"]
     end
   end
 
@@ -161,7 +212,7 @@ describe Sinatra::REST do
       Person.reset!
       rest Person, :renderer => 'erb'
     end
-    
+
     describe 'each method' do
 
       # index GET /models
@@ -233,7 +284,7 @@ describe Sinatra::REST do
 
         get_it "/people/#{el_people[2].text}"
         response_should_be 200, '<person><id>3</id><name>three</name></person>'
-        model_should_be 3      
+        model_should_be 3
       end
 
       it 'create a new person' do

@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'english/inflect'
+require 'cgi'
 
 class Object
   def instance_variables_map
@@ -28,46 +29,83 @@ module Sinatra
       renderer = options.delete(:renderer)
       renderer ||= :haml
 
-      # if set the route 
-      # :format => ['xml', 'html', '']  => [/models/:id, /models/:id.?:format?]
-      format = options.delete(:format)
+      # @false@ will remove the @POST@, @PUT@ and @DELETE@ routes
+      # by dfault this is enabled
+      # :editable => true
+      editable = options.delete(:editable)
+      editable = true if editable.nil?
+
+      # @true@ will add the @/models/new@ and @/models/edit@ routes
+      # by default this is disabled
+      # :inputable => false
+      inputable = options.delete(:inputable)
+      inputable = true if inputable.nil?
+
 
       # add some url_for_* helpers
       Sinatra::EventContext.class_eval <<-XXX
+        public
+              
         # index GET /models
         def url_for_#{plural}_index
           '/#{plural}'
         end
 
         # new GET /models/new
-        def url_for_#{plural}_new
-          '/#{plural}/new'
+        if editable && inputable
+          def url_for_#{plural}_new
+            '/#{plural}/new'
+          end
         end
 
         # create POST /models
-        def url_for_#{plural}_create
-          '/#{plural}'
+        if editable
+          def url_for_#{plural}_create
+            '/#{plural}'
+          end
         end
 
         # show GET /models/1
         def url_for_#{plural}_show(model)
-          "/#{plural}/\#{model.id}"
+          "/#{plural}/\#{escape_model_id(model)}"
         end
 
         # edit GET /models/1/edit
-        def url_for_#{plural}_edit(model)
-          "/#{plural}/\#{model.id}/edit"
+        if editable && inputable
+          def url_for_#{plural}_edit(model)
+            "/#{plural}/\#{escape_model_id(model)}/edit"
+          end
         end
 
         # update PUT /models/1
-        def url_for_#{plural}_update(model)
-          "/#{plural}/\#{model.id}"
+        if editable
+          def url_for_#{plural}_update(model)
+            "/#{plural}/\#{escape_model_id(model)}"
+          end
         end
 
         # destroy DELETE /models/1
-        def url_for_#{plural}_destroy(model)
-          "/#{plural}/\#{model.id}"
+        if editable
+          def url_for_#{plural}_destroy(model)
+            "/#{plural}/\#{escape_model_id(model)}"
+          end
         end
+        
+        private
+        
+        def escape_model_id(model)
+          if model.kind_of?(String)
+            CGI.escape(model)
+          elsif model.kind_of?(Fixnum)
+            model
+          elsif model.id.kind_of? String
+            CGI.escape(model.id)
+          else
+            model.id
+          end
+        end
+        
+        public
       XXX
 
       # create an own module and fill it with the template
@@ -79,14 +117,18 @@ module Sinatra
         end
 
         # new GET /models/new
-        def new
-          @#{singular} = #{model}.new
+        if editable && inputable
+          def new
+            @#{singular} = #{model}.new
+          end
         end
 
         # create POST /models
-        def create
-          @#{singular} = #{model}.new(params)
-          @#{singular}.save
+        if editable
+          def create
+            @#{singular} = #{model}.new(params)
+            @#{singular}.save
+          end
         end
 
         # show GET /models/1
@@ -95,19 +137,25 @@ module Sinatra
         end
 
         # edit GET /models/1/edit
-        def edit
-          @#{singular} = #{model}.find_by_id(params[:id])
+        if editable && inputable
+          def edit
+            @#{singular} = #{model}.find_by_id(params[:id])
+          end
         end
 
         # update PUT /models/1
-        def update
-          @#{singular} = #{model}.find_by_id(params[:id])
-          @#{singular}.update_attributes(params)
+        if editable
+          def update
+            @#{singular} = #{model}.find_by_id(params[:id])
+            @#{singular}.update_attributes(params)
+          end
         end
 
         # destroy DELETE /models/1
-        def destroy
-          #{model}.delete(params[:id])
+        if editable
+          def destroy
+            #{model}.delete(params[:id])
+          end
         end
       XXX
 
@@ -136,15 +184,19 @@ module Sinatra
         end
 
         # new GET /models/new
-        get '/#{plural}/new' do
-          new
-          #{renderer.to_s} :"#{plural}/new", options
+        if editable && inputable
+          get '/#{plural}/new' do
+            new
+            #{renderer.to_s} :"#{plural}/new", options
+          end
         end
 
         # create POST /models
-        post '/#{plural}' do
-          create
-          redirect url_for_#{plural}_show(@#{singular}), '#{singular} created'
+        if editable
+          post '/#{plural}' do
+            create
+            redirect url_for_#{plural}_show(@#{singular}), '#{singular} created'
+          end
         end
 
         # show GET /models/1
@@ -158,21 +210,27 @@ module Sinatra
         end
 
         # edit GET /models/1/edit
-        get '/#{plural}/:id/edit' do
-          edit
-          #{renderer.to_s} :"#{plural}/edit", options
+        if editable && inputable
+          get '/#{plural}/:id/edit' do
+            edit
+            #{renderer.to_s} :"#{plural}/edit", options
+          end
         end
 
         # update PUT /models/1
-        put '/#{plural}/:id' do
-          update
-          redirect url_for_#{plural}_show(@#{singular}), '#{singular} updated'
+        if editable
+          put '/#{plural}/:id' do
+            update
+            redirect url_for_#{plural}_show(@#{singular}), '#{singular} updated'
+          end
         end
 
         # destroy DELETE /models/1
-        delete '/#{plural}/:id' do
-          destroy
-          redirect url_for_#{plural}_index, '#{singular} deleted'
+        if editable
+          delete '/#{plural}/:id' do
+            destroy
+            redirect url_for_#{plural}_index, '#{singular} deleted'
+          end
         end
       XXX
 

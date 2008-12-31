@@ -1,7 +1,8 @@
 h1. Sinatra-REST
 
 Actually it's a set of templates to introduce RESTful routes in Sinatra. The 
-only thing for you to do is to provide the views behind the routes.
+only thing for you to do is to provide the views. The routes and some 
+url helpers will be provided behind the scenes.
 
 
 h2. Installation
@@ -32,44 +33,18 @@ line:
 Which will add the following RESTful routes to your application. (Note the 
 pluralization of @Person@ to the @/people/*@ routes.)
 
-|_. Verb |_. Route        |_. Controller |_. View             |
-| GET    | /people        | index        | /people/index.haml |
-| GET    | /people/new    | new          | /people/new.haml   |
-| POST   | /people        | create       | -none-             |
-| GET    | /people/1      | show         | /people/show.haml  |
-| GET    | /people/1/edit | edit         | /people/edit.haml  |
-| PUT    | /people/1      | update       | -none-             |
-| DELETE | /people/1      | destroy      | -none-             |
-
-As you can see, each route is also associated with a named code block in the 
-controller. The controller does the minimum to make the routes work. Based on 
-the route it treates the model and redirects or renders the expected view.
-
-So imagine the following steps to show a single person:
-
-# request from the client's browser<br/>
-  GET http://localhost:4567/people/99
-  
-# Find and set @person in the controller<br/>
-  @person = Person.find_by_id(99)
-  
-# render the view to display @person<br/>
-  render @VIEW_DIR@/people/show.haml
-
-It's up to you to provide the views, because this goes beyond the restful 
-routing. The variable @@person@ is correctly named and injected into the view. 
-So maybe you'd like to do something like this:
-
-<pre><code>
-  <html>
-  <body>
-    <div>ID: <%= @person.id %></div>
-    <div>Name: <%= @person.name %></div>
-  </body>
-  </html>
-</code></pre>
+* GET    /people
+* GET    /people/new
+* POST   /people
+* GET    /people/1
+* GET    /people/1/edit
+* PUT    /people/1
+* DELETE /people/1
 
 That's it!
+
+For more details and options, please have a look at the pages in the  
+"Sinatra-REST Wiki":http://github.com/blindgaenger/sinatra-rest/wikis on Github.
 
 
 h2. Contact

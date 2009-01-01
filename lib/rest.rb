@@ -94,7 +94,9 @@ module Sinatra
         private
         
         def escape_model_id(model)
-          if model.kind_of?(String)
+          if model.nil?
+            raise 'can not generate url for nil'
+          elsif model.kind_of?(String)
             CGI.escape(model)
           elsif model.kind_of?(Fixnum)
             model

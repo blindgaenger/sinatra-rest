@@ -107,6 +107,10 @@ describe Sinatra::REST do
     before(:each) do
       Sinatra.application = nil
       @app = Sinatra.application
+
+      response_mock = mock "Response"
+      response_mock.should_receive(:"body=").with(nil).and_return(nil)
+      @context = Sinatra::EventContext.new(nil, response_mock, nil)
     end
 
 
@@ -116,15 +120,11 @@ describe Sinatra::REST do
       methods = Sinatra::EventContext.instance_methods.grep /^url_for_people_/
       methods.size.should == 2
 
-      response_mock = mock "Response"
-      response_mock.should_receive(:"body=").with(nil).and_return(nil)
-      context = Sinatra::EventContext.new(nil, response_mock, nil)
-
       @person = Person.new
       @person.id = 99
 
-      context.url_for_people_index.should == '/people'
-      context.url_for_people_show(@person).should == '/people/99'
+      @context.url_for_people_index.should == '/people'
+      @context.url_for_people_show(@person).should == '/people/99'
     end
 
     it 'should not add editable restful routes' do
@@ -143,18 +143,14 @@ describe Sinatra::REST do
       methods = Sinatra::EventContext.instance_methods.grep /^url_for_people_/
       methods.size.should == 5
 
-      response_mock = mock "Response"
-      response_mock.should_receive(:"body=").with(nil).and_return(nil)
-      context = Sinatra::EventContext.new(nil, response_mock, nil)
-
       @person = Person.new
       @person.id = 99
 
-      context.url_for_people_index.should == '/people'
-      context.url_for_people_create.should == '/people'
-      context.url_for_people_show(@person).should == '/people/99'
-      context.url_for_people_update(@person).should == '/people/99'
-      context.url_for_people_destroy(@person).should == '/people/99'
+      @context.url_for_people_index.should == '/people'
+      @context.url_for_people_create.should == '/people'
+      @context.url_for_people_show(@person).should == '/people/99'
+      @context.url_for_people_update(@person).should == '/people/99'
+      @context.url_for_people_destroy(@person).should == '/people/99'
     end
 
     it 'should not add inputable restful routes' do
@@ -173,20 +169,16 @@ describe Sinatra::REST do
       methods = Sinatra::EventContext.instance_methods.grep /^url_for_people_/
       methods.size.should == 7
 
-      response_mock = mock "Response"
-      response_mock.should_receive(:"body=").with(nil).and_return(nil)
-      context = Sinatra::EventContext.new(nil, response_mock, nil)
-
       @person = Person.new
       @person.id = 99
 
-      context.url_for_people_index.should == '/people'
-      context.url_for_people_new.should == '/people/new'
-      context.url_for_people_create.should == '/people'
-      context.url_for_people_show(@person).should == '/people/99'
-      context.url_for_people_edit(@person).should == '/people/99/edit'
-      context.url_for_people_update(@person).should == '/people/99'
-      context.url_for_people_destroy(@person).should == '/people/99'
+      @context.url_for_people_index.should == '/people'
+      @context.url_for_people_new.should == '/people/new'
+      @context.url_for_people_create.should == '/people'
+      @context.url_for_people_show(@person).should == '/people/99'
+      @context.url_for_people_edit(@person).should == '/people/99/edit'
+      @context.url_for_people_update(@person).should == '/people/99'
+      @context.url_for_people_destroy(@person).should == '/people/99'
     end
 
     it 'should add all restful routes' do
@@ -196,6 +188,30 @@ describe Sinatra::REST do
       @app.events[:post].map {|r| r.path}.should == ["/people"]
       @app.events[:put].map {|r| r.path}.should == ["/people/:id"]
       @app.events[:delete].map {|r| r.path}.should == ["/people/:id"]
+    end
+
+    it 'should support models, strings and integers' do
+      @person = Person.new('id' => 99)
+
+      @context.url_for_people_show(@person).should == '/people/99'
+      @context.url_for_people_show(99).should == '/people/99'
+      @context.url_for_people_show('99').should == '/people/99'
+      lambda {@context.url_for_people_show(nil)}.should raise_error('can not generate url for nil')
+      
+      @context.url_for_people_edit(@person).should == '/people/99/edit'
+      @context.url_for_people_edit(99).should == '/people/99/edit'
+      @context.url_for_people_edit('99').should == '/people/99/edit'
+      lambda {@context.url_for_people_edit(nil)}.should raise_error('can not generate url for nil')
+
+      @context.url_for_people_update(@person).should == '/people/99'
+      @context.url_for_people_update(99).should == '/people/99'
+      @context.url_for_people_update('99').should == '/people/99'
+      lambda {@context.url_for_people_update(nil)}.should raise_error('can not generate url for nil')
+
+      @context.url_for_people_destroy(@person).should == '/people/99'
+      @context.url_for_people_destroy(99).should == '/people/99'
+      @context.url_for_people_destroy('99').should == '/people/99'
+      lambda {@context.url_for_people_destroy(nil)}.should raise_error('can not generate url for nil')
     end
   end
 

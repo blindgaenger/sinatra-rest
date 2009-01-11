@@ -80,6 +80,20 @@ def model_should_be(size)
   Person.all.size.should == size
 end
 
+def call_order_should_be(order, &block)
+  Person.call_order = []
+  block.call
+  Person.call_order.map {|c| c[:method]}.should == order
+end
+
+def called_should_be(name, &block)
+  Person.call_order = []
+  block.call
+  called = Person.call_order.map {|c| c[:called]}
+  called.should_not be_nil
+  called.each {|c| c.should == name }
+end
+
 
 describe Sinatra::REST do
 
@@ -197,7 +211,7 @@ describe Sinatra::REST do
       @context.url_for_people_show(99).should == '/people/99'
       @context.url_for_people_show('99').should == '/people/99'
       lambda {@context.url_for_people_show(nil)}.should raise_error('can not generate url for nil')
-      
+
       @context.url_for_people_edit(@person).should == '/people/99/edit'
       @context.url_for_people_edit(99).should == '/people/99/edit'
       @context.url_for_people_edit('99').should == '/people/99/edit'
@@ -277,13 +291,13 @@ describe Sinatra::REST do
 
     describe 'some use cases' do
 
-      it 'list all persons' do
+      it 'should list all persons' do
         get_it '/people'
         response_should_be 200, '<people><person><id>1</id></person><person><id>2</id></person><person><id>3</id></person></people>'
         model_should_be 3
       end
 
-      it 'read all persons' do
+      it 'should read all persons' do
         get_it '/people'
 
         el_people = doc(body).elements.to_a("*/person/id")
@@ -303,7 +317,7 @@ describe Sinatra::REST do
         model_should_be 3
       end
 
-      it 'create a new person' do
+      it 'should create a new person' do
         get_it '/people'
         response_should_be 200, '<people><person><id>1</id></person><person><id>2</id></person><person><id>3</id></person></people>'
         model_should_be 3
@@ -321,7 +335,7 @@ describe Sinatra::REST do
         model_should_be 4
       end
 
-      it 'update a person' do
+      it 'should update a person' do
         get_it '/people/2'
         response_should_be 200, '<person><id>2</id><name>two</name></person>'
         model_should_be 3
@@ -335,7 +349,7 @@ describe Sinatra::REST do
         model_should_be 3
       end
 
-      it 'delete a person' do
+      it 'should delete a person' do
         get_it '/people'
         response_should_be 200, '<people><person><id>1</id></person><person><id>2</id></person><person><id>3</id></person></people>'
         model_should_be 3
@@ -355,7 +369,80 @@ describe Sinatra::REST do
 
     end
 
+    describe 'life-cycle' do
+
+      before(:each) do
+        Person.class_eval '@call_order = []; def self.call_order; @call_order; end; def self.call_order=(arr); @call_order = arr; end'
+        rest Person, :renderer => 'erb' do
+          def before(name)
+            Person.call_order << {:method => :before, :called => name}
+          end
+
+          def after(name)
+            Person.call_order << {:method => :after, :called => name}
+          end
+
+          def index
+            Person.call_order << {:method => :index, :called => :index}
+            super
+          end
+
+          def new
+            Person.call_order << {:method => :new, :called => :new}
+            super
+          end
+
+          def create
+            Person.call_order << {:method => :create, :called => :create}
+            super
+          end
+
+          def show
+            Person.call_order << {:method => :show, :called => :show}
+            super
+          end
+
+          def edit
+            Person.call_order << {:method => :edit, :called => :edit}
+            super
+          end
+
+          def update
+            Person.call_order << {:method => :update, :called => :update}
+            super
+          end
+
+          def destroy
+            Person.call_order << {:method => :destroy, :called => :destroy}
+            super
+          end
+        end
+      end
+
+      it 'should call before and after in the right order' do
+        call_order_should_be [:before, :index, :after]   do get_it    '/people' end
+        call_order_should_be [:before, :new, :after]     do get_it    '/people/new' end
+        call_order_should_be [:before, :create, :after]  do post_it   '/people', :name => 'initial name' end
+        call_order_should_be [:before, :show, :after]    do get_it    '/people/1' end
+        call_order_should_be [:before, :edit, :after]    do get_it    '/people/1/edit' end
+        call_order_should_be [:before, :update, :after]  do put_it    '/people/1', :name => 'new name' end
+        call_order_should_be [:before, :destroy, :after] do delete_it '/people/1' end
+      end
+
+      it 'should call before and after with the name of the called method' do
+        called_should_be :index   do get_it    '/people' end
+        called_should_be :new     do get_it    '/people/new' end
+        called_should_be :create  do post_it   '/people', :name => 'initial name' end
+        called_should_be :show    do get_it    '/people/1' end
+        called_should_be :edit    do get_it    '/people/1/edit' end
+        called_should_be :update  do put_it    '/people/1', :name => 'new name' end
+        called_should_be :destroy do delete_it '/people/1' end
+      end
+
+    end
+
   end
 
 end
+
 

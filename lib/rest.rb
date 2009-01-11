@@ -45,7 +45,7 @@ module Sinatra
       # add some url_for_* helpers
       Sinatra::EventContext.class_eval <<-XXX
         public
-              
+
         # index GET /models
         def url_for_#{plural}_index
           '/#{plural}'
@@ -90,9 +90,9 @@ module Sinatra
             "/#{plural}/\#{escape_model_id(model)}"
           end
         end
-        
+
         private
-        
+
         def escape_model_id(model)
           if model.nil?
             raise 'can not generate url for nil'
@@ -106,13 +106,28 @@ module Sinatra
             model.id
           end
         end
-        
+
         public
       XXX
 
       # create an own module and fill it with the template
       controller_template = Module.new
       controller_template.class_eval <<-XXX
+        def call(name)
+          before name
+          send name
+          after name
+        end
+
+        def after(name)
+          # should be overridden
+        end
+
+        def before(name)
+          # should be overridden
+        end
+
+
         # index GET /models
         def index
           @#{plural} = #{model}.all
@@ -181,14 +196,14 @@ module Sinatra
 
         # index GET /models
         get '/#{plural}' do
-          index
+          call :index
           #{renderer.to_s} :"#{plural}/index", options
         end
 
         # new GET /models/new
         if editable && inputable
           get '/#{plural}/new' do
-            new
+            call :new
             #{renderer.to_s} :"#{plural}/new", options
           end
         end
@@ -196,14 +211,14 @@ module Sinatra
         # create POST /models
         if editable
           post '/#{plural}' do
-            create
+            call :create
             redirect url_for_#{plural}_show(@#{singular}), '#{singular} created'
           end
         end
 
         # show GET /models/1
         get '/#{plural}/:id' do
-          show
+          call :show
           if @#{singular}.nil?
             throw :halt, [404, '#{singular} not found']
           else
@@ -214,7 +229,7 @@ module Sinatra
         # edit GET /models/1/edit
         if editable && inputable
           get '/#{plural}/:id/edit' do
-            edit
+            call :edit
             #{renderer.to_s} :"#{plural}/edit", options
           end
         end
@@ -222,7 +237,7 @@ module Sinatra
         # update PUT /models/1
         if editable
           put '/#{plural}/:id' do
-            update
+            call :update
             redirect url_for_#{plural}_show(@#{singular}), '#{singular} updated'
           end
         end
@@ -230,7 +245,7 @@ module Sinatra
         # destroy DELETE /models/1
         if editable
           delete '/#{plural}/:id' do
-            destroy
+            call :destroy
             redirect url_for_#{plural}_index, '#{singular} deleted'
           end
         end
@@ -252,4 +267,5 @@ module Sinatra
 end # Sinatra
 
 include Sinatra::REST
+
 

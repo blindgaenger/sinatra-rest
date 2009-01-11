@@ -36,12 +36,42 @@ pluralization of @Person@ to the @/people/*@ routes.)
 * GET    /people
 * GET    /people/new
 * POST   /people
-* GET    /people/1
-* GET    /people/1/edit
-* PUT    /people/1
-* DELETE /people/1
+* GET    /people/:id
+* GET    /people/:id/edit
+* PUT    /people/:id
+* DELETE /people/:id
 
-That's it!
+But the real benefit is, that these *routes define a restful standard behaviour* 
+on your model, *appropriate routing and redirecting* and *named url helpers*. 
+
+For instance, you can imagine the following code to be added for the @/people@ 
+and @/people/:id@ routes.
+
+<pre>
+<code>
+  # simply add this line
+  
+  rest Person, :renderer => :erb
+
+  # and this is generated for you
+
+  get '/people' do
+    @people = Person.all
+    erb :"people/index", options
+  end
+
+  put '/people/:id' do
+    @person = Person.find_by_id(params[:id])
+    redirect url_for_people_show(@person), 'person updated'
+  end
+
+  # further restful routes for Person ...
+</code>
+</pre>
+
+That's only half the truth! The routes are generated dynamically, so all 
+defaults can be overridden (the behaviour, after/before callbacks, used renderer, 
+which routes are added).
 
 For more details and options, please have a look at the pages in the  
 "Sinatra-REST Wiki":http://github.com/blindgaenger/sinatra-rest/wikis on Github.

@@ -419,7 +419,7 @@ describe Sinatra::REST do
         end
       end
 
-      it 'should call before and after in the right order' do
+      it 'should call :before and :after in the right order' do
         call_order_should_be [:before, :index, :after]   do get_it    '/people' end
         call_order_should_be [:before, :new, :after]     do get_it    '/people/new' end
         call_order_should_be [:before, :create, :after]  do post_it   '/people', :name => 'initial name' end
@@ -429,7 +429,7 @@ describe Sinatra::REST do
         call_order_should_be [:before, :destroy, :after] do delete_it '/people/1' end
       end
 
-      it 'should call before and after with the name of the called method' do
+      it 'should call :before and :after with the name of the called method' do
         called_should_be :index   do get_it    '/people' end
         called_should_be :new     do get_it    '/people/new' end
         called_should_be :create  do post_it   '/people', :name => 'initial name' end

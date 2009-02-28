@@ -247,43 +247,43 @@ describe Sinatra::REST do
 
       # index GET /models
       it 'should list all people on index by their id' do
-        get_it '/people'
+        get '/people'
         response_should_be 200, '<people><person><id>1</id></person><person><id>2</id></person><person><id>3</id></person></people>'
       end
 
       # new GET /models/new
       it 'should prepare an empty item on new' do
-        get_it '/people/new'
+        get '/people/new'
         response_should_be 200, '<person><id/><name/></person>'
       end
 
       # create POST /models
       it 'should create an item on post' do
-        post_it '/people', :name => 'new resource'
+        post '/people', :name => 'new resource'
         response_should_be 302, 'person created'
       end
 
       # show GET /models/1
       it 'should show an item on get' do
-        get_it '/people/1'
+        get '/people/1'
         response_should_be 200, '<person><id>1</id><name>one</name></person>'
       end
 
       # edit GET /models/1/edit
       it 'should get the item for editing' do
-        get_it '/people/1/edit'
+        get '/people/1/edit'
         response_should_be 200, '<person><id>1</id><name>one</name></person>'
       end
 
       # update PUT /models/1
       it 'should update an item on put' do
-        put_it '/people/1', :name => 'another name'
+        put '/people/1', :name => 'another name'
         response_should_be 302, 'person updated'
       end
 
       # destroy DELETE /models/1
       it 'should destroy an item on delete' do
-        delete_it '/people/1'
+        delete '/people/1'
         response_should_be 302, 'person deleted'
       end
 
@@ -292,77 +292,77 @@ describe Sinatra::REST do
     describe 'some use cases' do
 
       it 'should list all persons' do
-        get_it '/people'
+        get '/people'
         response_should_be 200, '<people><person><id>1</id></person><person><id>2</id></person><person><id>3</id></person></people>'
         model_should_be 3
       end
 
       it 'should read all persons' do
-        get_it '/people'
+        get '/people'
 
         el_people = doc(body).elements.to_a("*/person/id")
         el_people.size.should == 3
         model_should_be 3
 
-        get_it "/people/#{el_people[0].text}"
+        get "/people/#{el_people[0].text}"
         response_should_be 200, '<person><id>1</id><name>one</name></person>'
         model_should_be 3
 
-        get_it "/people/#{el_people[1].text}"
+        get "/people/#{el_people[1].text}"
         response_should_be 200, '<person><id>2</id><name>two</name></person>'
         model_should_be 3
 
-        get_it "/people/#{el_people[2].text}"
+        get "/people/#{el_people[2].text}"
         response_should_be 200, '<person><id>3</id><name>three</name></person>'
         model_should_be 3
       end
 
       it 'should create a new person' do
-        get_it '/people'
+        get '/people'
         response_should_be 200, '<people><person><id>1</id></person><person><id>2</id></person><person><id>3</id></person></people>'
         model_should_be 3
 
-        get_it '/people/new'
+        get '/people/new'
         response_should_be 200, '<person><id/><name/></person>'
         model_should_be 3
 
-        post_it '/people', {:name => 'four'}
+        post '/people', {:name => 'four'}
         response_should_be 302, 'person created'
         model_should_be 4
 
-        get_it '/people'
+        get '/people'
         response_should_be 200, '<people><person><id>1</id></person><person><id>2</id></person><person><id>3</id></person><person><id>4</id></person></people>'
         model_should_be 4
       end
 
       it 'should update a person' do
-        get_it '/people/2'
+        get '/people/2'
         response_should_be 200, '<person><id>2</id><name>two</name></person>'
         model_should_be 3
 
-        put_it '/people/2', {:name => 'tomorrow'}
+        put '/people/2', {:name => 'tomorrow'}
         response_should_be 302, 'person updated'
         model_should_be 3
 
-        get_it '/people/2'
+        get '/people/2'
         response_should_be 200, '<person><id>2</id><name>tomorrow</name></person>'
         model_should_be 3
       end
 
       it 'should delete a person' do
-        get_it '/people'
+        get '/people'
         response_should_be 200, '<people><person><id>1</id></person><person><id>2</id></person><person><id>3</id></person></people>'
         model_should_be 3
 
-        delete_it '/people/2'
+        delete '/people/2'
         response_should_be 302, 'person deleted'
         model_should_be 2
 
-        get_it '/people'
+        get '/people'
         response_should_be 200, '<people><person><id>1</id></person><person><id>3</id></person></people>'
         model_should_be 2
 
-        get_it '/people/2'
+        get '/people/2'
         response_should_be 404, 'person not found'
         model_should_be 2
       end
@@ -420,23 +420,23 @@ describe Sinatra::REST do
       end
 
       it 'should call :before and :after in the right order' do
-        call_order_should_be [:before, :index, :after]   do get_it    '/people' end
-        call_order_should_be [:before, :new, :after]     do get_it    '/people/new' end
-        call_order_should_be [:before, :create, :after]  do post_it   '/people', :name => 'initial name' end
-        call_order_should_be [:before, :show, :after]    do get_it    '/people/1' end
-        call_order_should_be [:before, :edit, :after]    do get_it    '/people/1/edit' end
-        call_order_should_be [:before, :update, :after]  do put_it    '/people/1', :name => 'new name' end
-        call_order_should_be [:before, :destroy, :after] do delete_it '/people/1' end
+        call_order_should_be [:before, :index, :after]   do get    '/people' end
+        call_order_should_be [:before, :new, :after]     do get    '/people/new' end
+        call_order_should_be [:before, :create, :after]  do post   '/people', :name => 'initial name' end
+        call_order_should_be [:before, :show, :after]    do get    '/people/1' end
+        call_order_should_be [:before, :edit, :after]    do get    '/people/1/edit' end
+        call_order_should_be [:before, :update, :after]  do put    '/people/1', :name => 'new name' end
+        call_order_should_be [:before, :destroy, :after] do delete '/people/1' end
       end
 
       it 'should call :before and :after with the name of the called method' do
-        called_should_be :index   do get_it    '/people' end
-        called_should_be :new     do get_it    '/people/new' end
-        called_should_be :create  do post_it   '/people', :name => 'initial name' end
-        called_should_be :show    do get_it    '/people/1' end
-        called_should_be :edit    do get_it    '/people/1/edit' end
-        called_should_be :update  do put_it    '/people/1', :name => 'new name' end
-        called_should_be :destroy do delete_it '/people/1' end
+        called_should_be :index   do get    '/people' end
+        called_should_be :new     do get    '/people/new' end
+        called_should_be :create  do post   '/people', :name => 'initial name' end
+        called_should_be :show    do get    '/people/1' end
+        called_should_be :edit    do get    '/people/1/edit' end
+        called_should_be :update  do put    '/people/1', :name => 'new name' end
+        called_should_be :destroy do delete '/people/1' end
       end
 
     end

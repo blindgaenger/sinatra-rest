@@ -1,4 +1,3 @@
-require 'rubygems'
 require 'english/inflect'
 require 'cgi'
 
@@ -59,7 +58,7 @@ module Sinatra
 
 
       # add some url_for_* helpers
-      Sinatra::EventContext.class_eval <<-XXX
+      Sinatra::Default.class_eval <<-XXX
         public
 
         # index GET /models
@@ -199,7 +198,7 @@ module Sinatra
       end
 
       # create the restful routes
-      Sinatra.application.instance_eval <<-XXX
+      Sinatra::Application.instance_eval <<-XXX
         # add the correct modules to the EventContext
         # use a metaclass so it isn't included again next time
         before do

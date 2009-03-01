@@ -1,14 +1,6 @@
 require 'english/inflect'
 require 'cgi'
 
-class Object
-  def instance_variables_map
-    instance_variables.inject({}) {|map, var|
-      map[var[1..-1]] = instance_variable_get(var); map
-    }
-  end
-end
-
 module Stone
   module Resource
     def find_by_id(id)

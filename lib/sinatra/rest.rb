@@ -1,6 +1,10 @@
 require 'sinatra/base'
 require 'english/inflect'
 
+libdir = File.dirname(__FILE__) + "/rest"
+$LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
+require 'adapters'
+
 module Sinatra
 
   module REST

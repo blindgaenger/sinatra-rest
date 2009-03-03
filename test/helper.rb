@@ -1,16 +1,23 @@
 require 'spec'
 require 'spec/interop/test'
 require 'sinatra/test'
-require 'lib/rest'
+
+$LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib'
+require 'sinatra/base'
+require 'sinatra/rest'
 
 Sinatra::Default.set(:environment, :test)
 Test::Unit::TestCase.send :include, Sinatra::Test
 
+
 # Sets up a Sinatra::Base subclass defined with the block
 # given. Used in setup or individual spec methods to establish
 # the application.
-def mock_app(base=Sinatra::Base, &block)
+def mock_app(&block)
+  base = Sinatra::Application
   @app = Sinatra.new(base) do
+    set :views, File.dirname(__FILE__) + '/views'
+          
     not_found do
       'route not found'
     end
@@ -18,52 +25,53 @@ def mock_app(base=Sinatra::Base, &block)
   @app.instance_eval(&block) if block_given?
 end
 
+
 #
-# format for easier testing
-def format_response
+# normalize for easier testing
+def normalized_response
   return status, body.gsub(/>\s+</, '><').strip
 end
 
 # index GET /models
 def index(url)
   get url
-  format_response
+  normalized_response
 end
 
 # new GET /models/new
 def new(url)
   get url
-  format_response
+  normalized_response
 end
 
 # create POST /models
 def create(url, params={})
   post url, params
-  format_response
+  normalized_response
 end
 
 # show GET /models/1
 def show(url)
   get url
-  format_response
+  normalized_response
 end
 
 # edit GET /models/1/edit
 def edit(url)
   get url
-  format_response
+  normalized_response
 end
 
 # update PUT /models/1
 def update(url, params={})
   put url, params
-  format_response
+  normalized_response
 end
 
 # destroy DELETE /models/1
 def destroy(url)
   delete url
-  format_response
+  normalized_response
 end
 
 

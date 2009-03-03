@@ -1,11 +1,10 @@
 require 'spec/rake/spectask'
 
-task :default => [:test]
-task :test => :spec
+task :default => :test
 
-desc "Run specs"
-Spec::Rake::SpecTask.new :spec do |t|
-  t.spec_opts = %w(--format specdoc --color)
-  t.spec_files = FileList['test/*_spec.rb']
+desc "Run tests"
+Spec::Rake::SpecTask.new :test do |t|
+  t.spec_opts = %w(--format specdoc --color --backtrace)
+  t.spec_files = FileList['test/rest_spec.rb']
 end
 

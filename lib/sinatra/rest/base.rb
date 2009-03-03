@@ -2,36 +2,38 @@ require 'sinatra/base'
 require 'english/inflect'
 
 module Sinatra
+
   module REST
 
     #
     # adds restful routes and url helpers for the model
     def rest(model_class, options={}, &block)
-      @model, @singular, @plural = conjugate(model_class)
+      parse_args(model_class, options)
 
-      @renderer = options.delete(:renderer)
-      @renderer ||= :haml
-      @renderer = @renderer.to_s
-
-      # @false@ will remove the @POST@, @PUT@ and @DELETE@ routes
-      # by dfault this is enabled
-      # :editable => true
-      @editable = options.delete(:editable)
-      @editable = true if @editable.nil?
-
-      # @true@ will add the @/models/new@ and @/models/edit@ routes
-      # by default this is disabled
-      # :inputable => false
-      @inputable = options.delete(:inputable)
-      @inputable = true if @inputable.nil?
-
-      generate_helpers
+      # register model specific helpers
+      helpers read_module_template('helpers.tpl.rb')
       
+      # register as DSL extension
       helpers read_module_template('controller.tpl.rb')
       instance_eval read_template('routes.tpl.rb')
     end
 
   protected
+
+    def parse_args(model_class, options)
+      @model, @singular, @plural = conjugate(model_class)
+
+      @renderer = (options.delete(:renderer) || :haml).to_s
+
+      # @false@ will remove the @POST@, @PUT@ and @DELETE@ routes
+      @editable = options.delete(:editable)
+      @editable = true if @editable.nil?
+
+      # @true@ will add the @/models/new@ and @/models/edit@ routes
+      @inputable = options.delete(:inputable)
+      @inputable = true if @inputable.nil?
+    end
+    
     #
     # creates the necessary forms of the model name
     # pretty much like ActiveSupport's inflections, but don't like to depend on
@@ -61,10 +63,28 @@ module Sinatra
       m
     end
 
+    #
+    # model unspecific helpers, will be included once
+    module Helpers
+    private
+      def escape_model_id(model)
+        if model.nil?
+          raise 'can not generate url for nil'
+        elsif model.kind_of?(String)
+          Rake::Utils.escape(model)
+        elsif model.kind_of?(Fixnum)
+          model
+        elsif model.id.kind_of? String
+          Rake::Utils.escape(model.id)
+        else
+          model.id
+        end
+      end
+    end
+
   end # REST
 
-  #
-  # register as DSL extension
+  helpers REST::Helpers
   register REST
 
 end # Sinatra

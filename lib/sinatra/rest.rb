@@ -73,7 +73,7 @@ module Sinatra
     def read_module_template(filename)
       t = read_template(filename)
       m = Module.new
-      m.module_eval(t)
+      m.module_eval(t, filename)
       m
     end
 

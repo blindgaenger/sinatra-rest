@@ -70,7 +70,6 @@ module Sinatra
     #
     # model unspecific helpers, will be included once
     module Helpers
-    private
       def escape_model_id(model)
         if model.nil?
           raise 'can not generate url for nil'

@@ -17,8 +17,18 @@ module Sinatra
       # register model specific helpers
       helpers read_module_template('rest/helpers.tpl.rb')
       
-      # register as DSL extension
-      helpers read_module_template('rest/controller.tpl.rb')
+      # create an own module, to override the template with custom methods
+      # this way, you can still use #super# in the overridden methods
+      controller = read_module_template('rest/controller.tpl.rb')
+      if block_given?
+        custom = CustomController.new(@plural)
+        custom.instance_eval &block
+        custom.module.send :include, controller
+        controller = custom.module
+      end
+      helpers controller
+      
+      # register routes as DSL extension
       instance_eval read_template('rest/routes.tpl.rb')
     end
 
@@ -70,6 +80,7 @@ module Sinatra
     #
     # model unspecific helpers, will be included once
     module Helpers
+      # for example _method will be removed
       def filter_model_params(params)
         params.reject {|k, v| k =~ /^_/}
       end
@@ -85,6 +96,25 @@ module Sinatra
           Rake::Utils.escape(model.id)
         else
           model.id
+        end
+      end
+    end
+
+    #
+    # used as context to build a module
+    class CustomController
+      attr_reader :module
+
+      def initialize(prefix)
+        @prefix = prefix
+        @module = Module.new
+      end
+
+      def method_missing(meth, *args, &block)
+        if %w[index new create show edit update destroy].include? meth.to_s
+          @module.send :define_method, "#{@prefix}_#{meth}", &block
+        else
+          super
         end
       end
     end

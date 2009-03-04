@@ -13,35 +13,40 @@ end
 # create POST /models
 #if @editable
   def PLURAL_create
-    @SINGULAR = MODEL.new(params)
+    mp = filter_model_params(params)
+    @SINGULAR = MODEL.new(mp)
     @SINGULAR.save
   end
 #end
 
 # show GET /models/1
 def PLURAL_show
-  @SINGULAR = MODEL.find_by_id(params[:id])
+  mp = filter_model_params(params)
+  @SINGULAR = MODEL.find_by_id(mp[:id])
 end
 
 # edit GET /models/1/edit
 #if @editable && @inputable
   def PLURAL_edit
-    @SINGULAR = MODEL.find_by_id(params[:id])
+    mp = filter_model_params(params)  
+    @SINGULAR = MODEL.find_by_id(mp[:id])
   end
 #end
 
 # update PUT /models/1
 #if @editable
   def PLURAL_update
-    @SINGULAR = MODEL.find_by_id(params[:id])
-    @SINGULAR.update_attributes(params)
+    mp = filter_model_params(params)  
+    @SINGULAR = MODEL.find_by_id(mp[:id])
+    @SINGULAR.update_attributes(mp)
   end
 #end
 
 # destroy DELETE /models/1
 #if @editable
   def PLURAL_destroy
-    MODEL.delete(params[:id])
+    mp = filter_model_params(params)  
+    MODEL.delete(mp[:id])
   end
 #end
 

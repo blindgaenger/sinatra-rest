@@ -70,6 +70,10 @@ module Sinatra
     #
     # model unspecific helpers, will be included once
     module Helpers
+      def filter_model_params(params)
+        params.reject {|k, v| k =~ /^_/}
+      end
+    
       def escape_model_id(model)
         if model.nil?
           raise 'can not generate url for nil'

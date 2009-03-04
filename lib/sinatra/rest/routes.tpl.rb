@@ -42,7 +42,11 @@ end
 #if @editable
   put '/PLURAL/:id' do
     PLURAL_update
-    redirect url_for_PLURAL_show(@SINGULAR), 'SINGULAR updated'
+    if @SINGULAR.nil?
+      throw :halt, [404, 'SINGULAR not found']
+    else
+      redirect url_for_PLURAL_show(@SINGULAR), 'SINGULAR updated'
+    end
   end
 #end
 

@@ -5,20 +5,20 @@ get '/PLURAL' do
 end
 
 # new GET /models/new
-if @editable && @inputable
+#if @editable && @inputable
   get '/PLURAL/new' do
     PLURAL_new
     RENDERER :"PLURAL/new", options
   end
-end
+#end
 
 # create POST /models
-if @editable
+#if @editable
   post '/PLURAL' do
     PLURAL_create
     redirect url_for_PLURAL_show(@SINGULAR), 'SINGULAR created'
   end
-end
+#end
 
 # show GET /models/1
 get '/PLURAL/:id' do
@@ -31,26 +31,26 @@ get '/PLURAL/:id' do
 end
 
 # edit GET /models/1/edit
-if @editable && @inputable
+#if @editable && @inputable
   get '/PLURAL/:id/edit' do
     PLURAL_edit
     RENDERER :"PLURAL/edit", options
   end
-end
+#end
 
 # update PUT /models/1
-if @editable
+#if @editable
   put '/PLURAL/:id' do
     PLURAL_update
     redirect url_for_PLURAL_show(@SINGULAR), 'SINGULAR updated'
   end
-end
+#end
 
 # destroy DELETE /models/1
-if @editable
+#if @editable
   delete '/PLURAL/:id' do
     PLURAL_destroy
     redirect url_for_PLURAL_index, 'SINGULAR deleted'
   end
-end
+#end
 

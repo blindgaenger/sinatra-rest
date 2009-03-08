@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/helper'
 
-describe 'inflection' do
+describe 'model inflection' do
 
   def conjugate(model)
     mock_app {

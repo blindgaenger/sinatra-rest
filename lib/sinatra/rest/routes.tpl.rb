@@ -58,7 +58,7 @@ end
 if DESTROY
   delete '/PLURAL/:id' do
     PLURAL_destroy
-    redirect url_for_PLURAL_index, 'SINGULAR deleted'
+    redirect url_for_PLURAL_index, 'SINGULAR destroyed'
   end
 end
 

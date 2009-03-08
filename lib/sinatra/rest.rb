@@ -37,7 +37,7 @@ module Sinatra
     ROUTES = {
       :all       => [:index, :new, :create, :show, :edit, :update, :destroy],
       :readable  => [:index, :show],
-      :inputable => [:create, :update, :destroy],      
+      :writeable => [:create, :update, :destroy],      
       :editable  => [:new, :edit],                        
     }
 

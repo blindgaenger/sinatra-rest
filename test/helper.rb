@@ -33,7 +33,7 @@ def mock_rest(model, options={}, &block)
     rest model, options
   }
   instance = @app.new
-  instance.instance_eval &block
+  instance.instance_eval(&block) if block_given?
 end
 
 

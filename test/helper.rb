@@ -9,7 +9,7 @@ require 'sinatra/rest'
 Sinatra::Default.set(:environment, :test)
 Test::Unit::TestCase.send :include, Sinatra::Test
 
-
+#
 # Sets up a Sinatra::Base subclass defined with the block
 # given. Used in setup or individual spec methods to establish
 # the application.
@@ -27,7 +27,7 @@ end
 
 #
 # sets rest in a sinatra instance
-# and returns the block's result
+# and returns the block's result, if a block is given
 def mock_rest(model, options={}, &block)
   mock_app {
     rest model, options

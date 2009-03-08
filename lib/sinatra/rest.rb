@@ -34,18 +34,26 @@ module Sinatra
 
   protected
 
+    ROUTES = {
+      :all       => [:index, :new, :create, :show, :edit, :update, :destroy],
+      :readable  => [:index, :show],
+      :inputable => [:create, :update, :destroy],      
+      :editable  => [:new, :edit],                        
+    }
+
     def parse_args(model_class, options)
       @model, @singular, @plural = conjugate(model_class)
-
       @renderer = (options.delete(:renderer) || :haml).to_s
-
-      # @false@ will remove the @POST@, @PUT@ and @DELETE@ routes
-      @editable = options.delete(:editable)
-      @editable = true if @editable.nil?
-
-      # @true@ will add the @/models/new@ and @/models/edit@ routes
-      @inputable = options.delete(:inputable)
-      @inputable = true if @inputable.nil?
+      @route_flags = parse_routes(options.delete(:routes) || :all)
+    end
+    
+    def parse_routes(routes)
+      [*routes].map {|route| ROUTES[route] || route}.flatten.uniq
+    end
+    
+    def gsub_routes(routes, template)
+      routes.each {|route| template.gsub!(/#{route.to_s.upcase}/, true.to_s) }
+      (ROUTES[:all] - routes).each {|route| template.gsub!(/#{route.to_s.upcase}/, false.to_s) }
     end
     
     #
@@ -64,7 +72,8 @@ module Sinatra
       t.gsub!(/PLURAL/, @plural)
       t.gsub!(/SINGULAR/, @singular)
       t.gsub!(/MODEL/, @model)
-      t.gsub!(/RENDERER/, @renderer)      
+      t.gsub!(/RENDERER/, @renderer)
+      gsub_routes(@route_flags, t)
       t
     end
 
@@ -101,7 +110,7 @@ module Sinatra
     end
 
     #
-    # used as context to build a module
+    # used as context to evaluate the controller's module
     class CustomController
       attr_reader :module
 

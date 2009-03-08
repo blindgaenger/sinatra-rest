@@ -38,14 +38,21 @@ describe 'url helpers' do
       mock_rest(Person, :routes => :writeable) { methods.grep(/^url_for_people_/).sort }.should == [
           "url_for_people_create",
           "url_for_people_destroy",
-          "url_for_people_update",          
+          "url_for_people_index",
+          "url_for_people_show",
+          "url_for_people_update",
       ]
   end
 
   it 'should add :editable helpers' do
       mock_rest(Person, :routes => :editable) { methods.grep(/^url_for_people_/).sort }.should == [
+          "url_for_people_create",
+          "url_for_people_destroy",
           "url_for_people_edit",
+          "url_for_people_index",
           "url_for_people_new",
+          "url_for_people_show",
+          "url_for_people_update",
       ]
   end
 

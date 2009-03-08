@@ -37,8 +37,8 @@ module Sinatra
     ROUTES = {
       :all       => [:index, :new, :create, :show, :edit, :update, :destroy],
       :readable  => [:index, :show],
-      :writeable => [:create, :update, :destroy],      
-      :editable  => [:new, :edit],                        
+      :writeable => [:index, :show, :create, :update, :destroy],      
+      :editable  => [:index, :show, :create, :update, :destroy, :new, :edit],                        
     }
 
     def parse_args(model_class, options)

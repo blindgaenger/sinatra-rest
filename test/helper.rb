@@ -25,6 +25,17 @@ def mock_app(&block)
   @app.instance_eval(&block) if block_given?
 end
 
+#
+# sets rest in a sinatra instance
+# and returns the block's result
+def mock_rest(model, options={}, &block)
+  mock_app {
+    rest model, options
+  }
+  instance = @app.new
+  instance.instance_eval &block
+end
+
 
 #
 # normalize for easier testing
@@ -115,7 +126,7 @@ class Person
 
   @@people = []
 
-  def self.all
+  def self.all(criteria={})
     #puts 'all'
     return @@people
   end

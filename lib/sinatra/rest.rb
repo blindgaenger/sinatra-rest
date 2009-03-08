@@ -119,12 +119,19 @@ module Sinatra
         @module = Module.new
       end
 
-      def method_missing(meth, *args, &block)
-        if %w[index new create show edit update destroy].include? meth.to_s
-          @module.send :define_method, "#{@prefix}_#{meth}", &block
-        else
-          super
-        end
+      def before(&block)  prefix :before,  &block; end
+      def after(&block)   prefix :after,   &block; end      
+      def index(&block)   prefix :index,   &block; end
+      def new(&block)     prefix :new,     &block; end
+      def create(&block)  prefix :create,  &block; end
+      def show(&block)    prefix :show,    &block; end
+      def edit(&block)    prefix :edit,    &block; end
+      def update(&block)  prefix :update,  &block; end
+      def destroy(&block) prefix :destroy, &block; end                        
+
+    private 
+      def prefix(name, &block)
+        @module.send :define_method, "#{@prefix}_#{name}", &block if block_given?
       end
     end
 

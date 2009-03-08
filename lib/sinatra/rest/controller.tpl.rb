@@ -1,3 +1,11 @@
+def PLURAL_before(name)
+  # override
+end
+
+def PLURAL_after(name)
+  # override
+end
+
 # index GET /models
 if INDEX
   def PLURAL_index(options={})

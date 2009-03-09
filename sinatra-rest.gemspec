@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
     "test/views/people/new.haml",
     "test/views/people/show.haml"
   ]
+
   s.require_paths = ["lib"]
   s.add_dependency "sinatra", [">= 0.9.0.5"]
   s.add_dependency "english", [">= 0.3.1"]

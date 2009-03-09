@@ -11,13 +11,23 @@ Gem::Specification.new do |s|
   s.files = [
     "Rakefile",
     "README.textile",
-    "lib/rest.rb",    
-    "spec/rest_spec.rb",
-    "spec/views/people/edit.erb",
-    "spec/views/people/index.erb",
-    "spec/views/people/new.erb",
-    "spec/views/people/show.erb"
-  ]  
+    "lib/sinatra/rest.rb",
+    "lib/sinatra/rest/adapters.rb",    
+    "lib/sinatra/rest/controller.tpl.rb",    
+    "lib/sinatra/rest/helpers.tpl.rb",    
+    "lib/sinatra/rest/routes.tpl.rb",
+    "test/call_order_spec.rb",
+    "test/crud_spec.rb",
+    "test/helper.rb",
+    "test/helpers_spec.rb",
+    "test/inflection_spec.rb",
+    "test/routes_spec.rb",
+    "test/test_spec.rb",
+    "test/views/people/edit.haml",
+    "test/views/people/index.haml",
+    "test/views/people/new.haml",
+    "test/views/people/show.haml"
+  ]
   s.require_paths = ["lib"]
   s.add_dependency "sinatra", [">= 0.9.0.5"]
   s.add_dependency "english", [">= 0.3.1"]

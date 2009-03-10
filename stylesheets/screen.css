@@ -1,0 +1,83 @@
+body {
+  background-color: #333333;
+  font-family: 'lucida grande','lucida sans unicade',sans-serif;
+  margin: 0.5em;
+  padding: 0;
+}
+
+#box {
+  background-color: #fff;
+  margin: 0 auto;
+  width: 50em;
+  padding: 1em;
+}
+
+#title * {
+  font-family: 'georgia','bitstream vera serif',serif;
+  font-size: 4em;
+  font-weight: bold;
+  letter-spacing: -6px;
+}
+#title img {
+  float: right;
+}
+#title a, #title a:hover {
+  color: #4D1818;
+  text-decoration: none;    
+  margin: 1em 0;
+}
+
+#content {
+  color: #333333;
+  font-size: 1.0em;
+}
+
+/* code */
+
+pre {
+  font-family: "lucida console","monaco","andale mono","bitstream vera sans mono","consolas",monospace;
+  background: #e8ddda none repeat scroll 0 0;
+  border: 1px solid #af776c;
+  color: #222222;
+  font-size: 1.0em;
+  line-height: 1.15;
+  padding: 0.5em;
+}
+pre code {
+  border: none;
+}
+
+p code {
+  background: #e8ddda none repeat scroll 0 0;
+  border: 1px solid #af776c;
+  padding: 0.2em;
+  font-size: 90%;
+}
+
+/* links */
+
+a {
+  text-decoration: none;
+  color: #802C25;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* tables */
+
+table {
+  font-family: "lucida console","monaco","andale mono","bitstream vera sans mono","consolas",monospace;
+  border: 1px solid #af776c;
+  border-collapse: collapse;
+}
+th {
+  background-color: #e8ddda;
+}
+td {
+  border-top: 1px solid #af776c;
+}
+table, tr, th, td {
+  padding: 0.5em;
+  font-size: 0.9em;
+}

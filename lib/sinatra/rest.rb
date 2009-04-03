@@ -98,11 +98,11 @@ module Sinatra
         if model.nil?
           raise 'can not generate url for nil'
         elsif model.kind_of?(String)
-          Rake::Utils.escape(model)
+          Rack::Utils.escape(model)
         elsif model.kind_of?(Fixnum)
           model
         elsif model.id.kind_of? String
-          Rake::Utils.escape(model.id)
+          Rack::Utils.escape(model.id)
         else
           model.id
         end

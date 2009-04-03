@@ -107,6 +107,16 @@ module Sinatra
           model.id
         end
       end
+
+      def call_model_method(model_class, name, options={})
+        method = model_class.method(name)
+        if method.arity == 0
+          Kernel.warn "warning: calling #{model_class.to_s}##{name} with args, although it doesn't take args" if options
+          method.call
+        else
+          method.call(options)
+        end
+      end
     end
 
     #

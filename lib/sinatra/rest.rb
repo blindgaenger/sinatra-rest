@@ -110,7 +110,7 @@ module Sinatra
 
       def call_model_method(model_class, name, options={})
         method = model_class.method(name)
-        if method.arity == 0
+        if options.nil? || method.arity == 0
           Kernel.warn "warning: calling #{model_class.to_s}##{name} with args, although it doesn't take args" if options
           method.call
         else
@@ -129,15 +129,15 @@ module Sinatra
         @module = Module.new
       end
 
-      def before(&block)  prefix :before,  &block; end
-      def after(&block)   prefix :after,   &block; end      
-      def index(&block)   prefix :index,   &block; end
-      def new(&block)     prefix :new,     &block; end
-      def create(&block)  prefix :create,  &block; end
-      def show(&block)    prefix :show,    &block; end
-      def edit(&block)    prefix :edit,    &block; end
-      def update(&block)  prefix :update,  &block; end
-      def destroy(&block) prefix :destroy, &block; end                        
+      def before(options={}, &block)  prefix :before,  &block; end
+      def after(options={}, &block)   prefix :after,   &block; end      
+      def index(options={}, &block)   prefix :index,   &block; end
+      def new(options={}, &block)     prefix :new,     &block; end
+      def create(options={}, &block)  prefix :create,  &block; end
+      def show(options={}, &block)    prefix :show,    &block; end
+      def edit(options={}, &block)    prefix :edit,    &block; end
+      def update(options={}, &block)  prefix :update,  &block; end
+      def destroy(options={}, &block) prefix :destroy, &block; end                        
 
     private 
       def prefix(name, &block)

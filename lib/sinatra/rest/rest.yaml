@@ -1,0 +1,51 @@
+--- 
+:index:
+  :verb: GET
+  :route: /PLURAL
+  :render: |-
+    RENDERER :'PLURAL/index', options  
+
+:new:
+  :verb: GET
+  :route: /PLURAL/new
+  :render: |-
+    RENDERER :'PLURAL/new', options
+
+:create:
+  :verb: POST
+  :route: /PLURAL
+  :render: |-
+    redirect url_for_PLURAL_show(@SINGULAR), 'SINGULAR created'
+
+:show:
+  :verb: GET
+  :route: /PLURAL/:id
+  :render: |-
+    if @SINGULAR.nil?
+      throw :halt, [404, 'SINGULAR not found']
+    else
+      RENDERER :'PLURAL/show', options
+    end
+
+:edit:
+  :verb: GET
+  :route: /PLURAL/:id/edit
+  :render: |-
+    RENDERER :'PLURAL/edit', options
+
+:update:
+  :verb: PUT
+  :route: /PLURAL/:id
+  :render: |-
+    if @SINGULAR.nil?
+      throw :halt, [404, 'SINGULAR not found']
+    else
+      redirect url_for_PLURAL_show(@SINGULAR), 'SINGULAR updated'
+    end
+
+:destroy:
+  :verb: DELETE
+  :route: /PLURAL/:id
+  :render: |-
+    redirect url_for_PLURAL_index, 'SINGULAR destroyed'
+

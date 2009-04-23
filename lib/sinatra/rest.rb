@@ -4,6 +4,7 @@ require 'english/inflect'
 libdir = File.dirname(__FILE__) + "/rest"
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 require 'adapters'
+require 'yaml'
 
 module Sinatra
 
@@ -13,6 +14,7 @@ module Sinatra
     # adds restful routes and url helpers for the model
     def rest(model_class, options={}, &block)
       parse_args(model_class, options)
+      read_config('rest/rest.yaml')
 
       # register model specific helpers
       helpers read_module_template('rest/helpers.tpl.rb')
@@ -29,7 +31,7 @@ module Sinatra
       helpers controller
       
       # register routes as DSL extension
-      instance_eval read_template('rest/routes.tpl.rb')
+      instance_eval generate_routes.join("\n\n")
     end
 
   protected
@@ -51,6 +53,11 @@ module Sinatra
       [*routes].map {|route| ROUTES[route] || route}.flatten.uniq
     end
     
+    def read_config(filename)
+      file = File.read(File.join(File.dirname(__FILE__), filename))
+      @config = YAML.load file
+    end
+    
     def gsub_routes(routes, template)
       routes.each {|route| template.gsub!(/#{route.to_s.upcase}/, true.to_s) }
       (ROUTES[:all] - routes).each {|route| template.gsub!(/#{route.to_s.upcase}/, false.to_s) }
@@ -65,16 +72,42 @@ module Sinatra
       return model, singular, singular.pluralize
     end
 
-    #
-    # read the file and do some substitutions
-    def read_template(filename)
-      t = File.read(File.join(File.dirname(__FILE__), filename))
+    def replace_variables(t)
       t.gsub!(/PLURAL/, @plural)
       t.gsub!(/SINGULAR/, @singular)
       t.gsub!(/MODEL/, @model)
       t.gsub!(/RENDERER/, @renderer)
       gsub_routes(@route_flags, t)
-      t
+      t    
+    end
+
+    # keep the order of :all routes
+    def generate_routes
+      ROUTES[:all].select{|r| @route_flags.include? r}.map{|r| route_template(r)}
+    end
+    
+    def route_template(route)
+      t = <<-RUBY
+        VERB 'ROUTE' do
+          PLURAL_before :NAME
+          PLURAL_NAME
+          PLURAL_after :NAME   
+          RENDER
+        end
+      RUBY
+      t.gsub!('NAME', route.to_s)
+      t.gsub!('VERB', @config[route][:verb].downcase)
+      t.gsub!('ROUTE', @config[route][:route])
+      t.gsub!('RENDER', @config[route][:render]) 
+      replace_variables(t)  
+    end
+
+
+    #
+    # read the file and do some substitutions
+    def read_template(filename)
+      t = File.read(File.join(File.dirname(__FILE__), filename))
+      replace_variables(t)
     end
 
     #

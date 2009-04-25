@@ -31,7 +31,7 @@ module Sinatra
       helpers controller
       
       # register routes as DSL extension
-      instance_eval generate_routes.join("\n\n")
+      instance_eval generate_routes
     end
 
   protected
@@ -83,7 +83,7 @@ module Sinatra
 
     # keep the order of :all routes
     def generate_routes
-      ROUTES[:all].select{|r| @route_flags.include? r}.map{|r| route_template(r)}
+      ROUTES[:all].select{|r| @route_flags.include? r}.map{|r| route_template(r)}.join("\n\n")
     end
     
     def route_template(route)

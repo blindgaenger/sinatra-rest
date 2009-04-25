@@ -80,7 +80,7 @@ module Sinatra
       if route
         t.gsub!('NAME', route.to_s)
         t.gsub!('VERB', @config[route][:verb].downcase)
-        t.gsub!('ROUTE', @config[route][:route])
+        t.gsub!('URL', @config[route][:url])
         t.gsub!('RENDER', @config[route][:render]) 
       end    
       t.gsub!(/PLURAL/, @plural)
@@ -97,7 +97,7 @@ module Sinatra
     
     def route_template(route)
       t = <<-RUBY
-        VERB 'ROUTE' do
+        VERB 'URL' do
           PLURAL_before :NAME
           PLURAL_NAME
           PLURAL_after :NAME   
@@ -118,11 +118,11 @@ module Sinatra
     def helpers_template(route)
       t = <<-RUBY
         def url_for_PLURAL_NAME(model=nil)
-          "ROUTE"
+          "URL"
         end
       RUBY
-      helper_route = @config[route][:route].gsub(':id', '#{escape_model_id(model)}')
-      t.gsub!('ROUTE', helper_route)
+      helper_route = @config[route][:url].gsub(':id', '#{escape_model_id(model)}')
+      t.gsub!('URL', helper_route)
       replace_variables(t, route)
     end
 

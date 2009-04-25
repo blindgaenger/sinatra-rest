@@ -17,7 +17,7 @@ module Sinatra
       read_config('rest/rest.yaml')
 
       # register model specific helpers
-      helpers read_module_template('rest/helpers.tpl.rb')
+      helpers generate_helpers
       
       # create an own module, to override the template with custom methods
       # this way, you can still use #super# in the overridden methods
@@ -50,14 +50,18 @@ module Sinatra
     end
     
     def parse_routes(routes)
-      [*routes].map {|route| ROUTES[route] || route}.flatten.uniq
+      routes = [*routes].map {|route| ROUTES[route] || route}.flatten.uniq
+      # keep the order of :all routes
+      ROUTES[:all].select{|route| routes.include? route}
     end
     
     def read_config(filename)
       file = File.read(File.join(File.dirname(__FILE__), filename))
       @config = YAML.load file
     end
-    
+
+
+    # TODO: deprecated
     def gsub_routes(routes, template)
       routes.each {|route| template.gsub!(/#{route.to_s.upcase}/, true.to_s) }
       (ROUTES[:all] - routes).each {|route| template.gsub!(/#{route.to_s.upcase}/, false.to_s) }
@@ -72,7 +76,13 @@ module Sinatra
       return model, singular, singular.pluralize
     end
 
-    def replace_variables(t)
+    def replace_variables(t, route=nil)
+      if route
+        t.gsub!('NAME', route.to_s)
+        t.gsub!('VERB', @config[route][:verb].downcase)
+        t.gsub!('ROUTE', @config[route][:route])
+        t.gsub!('RENDER', @config[route][:render]) 
+      end    
       t.gsub!(/PLURAL/, @plural)
       t.gsub!(/SINGULAR/, @singular)
       t.gsub!(/MODEL/, @model)
@@ -81,9 +91,8 @@ module Sinatra
       t    
     end
 
-    # keep the order of :all routes
     def generate_routes
-      ROUTES[:all].select{|r| @route_flags.include? r}.map{|r| route_template(r)}.join("\n\n")
+      @route_flags.map{|r| route_template(r)}.join("\n\n")
     end
     
     def route_template(route)
@@ -95,13 +104,27 @@ module Sinatra
           RENDER
         end
       RUBY
-      t.gsub!('NAME', route.to_s)
-      t.gsub!('VERB', @config[route][:verb].downcase)
-      t.gsub!('ROUTE', @config[route][:route])
-      t.gsub!('RENDER', @config[route][:render]) 
-      replace_variables(t)  
+      replace_variables(t, route)
     end
 
+    def generate_helpers
+      m = Module.new
+      @route_flags.each {|r|
+        m.module_eval helpers_template(r)
+      }
+      m
+    end
+    
+    def helpers_template(route)
+      t = <<-RUBY
+        def url_for_PLURAL_NAME(model=nil)
+          "ROUTE"
+        end
+      RUBY
+      helper_route = @config[route][:route].gsub(':id', '#{escape_model_id(model)}')
+      t.gsub!('ROUTE', helper_route)
+      replace_variables(t, route)
+    end
 
     #
     # read the file and do some substitutions

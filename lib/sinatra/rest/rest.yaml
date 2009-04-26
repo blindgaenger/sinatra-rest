@@ -2,24 +2,33 @@
 :index:
   :verb: GET
   :url: /PLURAL
+  :control: |-
+    @PLURAL = call_model_method(MODEL, :all, mp)
   :render: |-
     RENDERER :'PLURAL/index', options  
 
 :new:
   :verb: GET
   :url: /PLURAL/new
+  :control: |-
+    @SINGULAR = call_model_method(MODEL, :new, mp)
   :render: |-
     RENDERER :'PLURAL/new', options
 
 :create:
   :verb: POST
   :url: /PLURAL
+  :control: |-
+    @SINGULAR = call_model_method(MODEL, :new, mp)
+    @SINGULAR.save
   :render: |-
     redirect url_for_PLURAL_show(@SINGULAR), 'SINGULAR created'
 
 :show:
   :verb: GET
   :url: /PLURAL/:id
+  :control: |-
+    @SINGULAR = call_model_method(MODEL, :find_by_id, mp[:id])
   :render: |-
     if @SINGULAR.nil?
       throw :halt, [404, 'SINGULAR not found']
@@ -30,12 +39,17 @@
 :edit:
   :verb: GET
   :url: /PLURAL/:id/edit
+  :control: |-
+    @SINGULAR = call_model_method(MODEL, :find_by_id, mp[:id])
   :render: |-
     RENDERER :'PLURAL/edit', options
 
 :update:
   :verb: PUT
   :url: /PLURAL/:id
+  :control: |-
+    @SINGULAR = call_model_method(MODEL, :find_by_id, mp[:id])
+    @SINGULAR.update_attributes(mp) unless @SINGULAR.nil?
   :render: |-
     if @SINGULAR.nil?
       throw :halt, [404, 'SINGULAR not found']
@@ -46,6 +60,8 @@
 :destroy:
   :verb: DELETE
   :url: /PLURAL/:id
+  :control: |-
+    call_model_method(MODEL, :delete, mp[:id])
   :render: |-
     redirect url_for_PLURAL_index, 'SINGULAR destroyed'
 

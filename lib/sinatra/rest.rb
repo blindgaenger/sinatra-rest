@@ -21,7 +21,7 @@ module Sinatra
       
       # create an own module, to override the template with custom methods
       # this way, you can still use #super# in the overridden methods
-      controller = read_module_template('rest/controller.tpl.rb')
+      controller = generate_controller
       if block_given?
         custom = CustomController.new(@plural)
         custom.instance_eval &block
@@ -81,6 +81,7 @@ module Sinatra
         t.gsub!('NAME', route.to_s)
         t.gsub!('VERB', @config[route][:verb].downcase)
         t.gsub!('URL', @config[route][:url])
+        t.gsub!('CONTROL', @config[route][:control])
         t.gsub!('RENDER', @config[route][:render]) 
       end    
       t.gsub!(/PLURAL/, @plural)
@@ -125,6 +126,31 @@ module Sinatra
       t.gsub!('URL', helper_route)
       replace_variables(t, route)
     end
+
+    def generate_controller
+      m = Module.new
+      t = <<-RUBY
+        def PLURAL_before(name); end
+        def PLURAL_after(name); end
+      RUBY
+      m.module_eval replace_variables(t)
+
+      @route_flags.each {|route|
+        m.module_eval controller_template(route)
+      }
+      m
+    end
+    
+    def controller_template(route)
+      t = <<-RUBY
+        def PLURAL_NAME(options=params)
+          mp = filter_model_params(options)
+          CONTROL
+        end
+      RUBY
+      replace_variables(t, route)
+    end
+    
 
     #
     # read the file and do some substitutions

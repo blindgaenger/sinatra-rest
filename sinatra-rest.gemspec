@@ -1,8 +1,8 @@
 Gem::Specification.new do |s|
   s.platform = Gem::Platform::RUBY
   s.name = "sinatra-rest"
-  s.version = "0.3.0"
-  s.date = "2009-04-10"  
+  s.version = "0.3.1"
+  s.date = "2009-04-26"  
   s.authors = ["blindgaenger"]
   s.email = "blindgaenger@gmail.com"
   s.homepage = "http://github.com/blindgaenger/sinatra-rest"  

@@ -60,13 +60,6 @@ module Sinatra
       @config = YAML.load file
     end
 
-
-    # TODO: deprecated
-    def gsub_routes(routes, template)
-      routes.each {|route| template.gsub!(/#{route.to_s.upcase}/, true.to_s) }
-      (ROUTES[:all] - routes).each {|route| template.gsub!(/#{route.to_s.upcase}/, false.to_s) }
-    end
-    
     #
     # creates the necessary forms of the model name
     # pretty much like ActiveSupport's inflections, but don't like to depend on
@@ -88,7 +81,6 @@ module Sinatra
       t.gsub!(/SINGULAR/, @singular)
       t.gsub!(/MODEL/, @model)
       t.gsub!(/RENDERER/, @renderer)
-      gsub_routes(@route_flags, t)
       t    
     end
 
@@ -151,23 +143,6 @@ module Sinatra
       replace_variables(t, route)
     end
     
-
-    #
-    # read the file and do some substitutions
-    def read_template(filename)
-      t = File.read(File.join(File.dirname(__FILE__), filename))
-      replace_variables(t)
-    end
-
-    #
-    # read the template and put it into an anonymous module
-    def read_module_template(filename)
-      t = read_template(filename)
-      m = Module.new
-      m.module_eval(t, filename)
-      m
-    end
-
     #
     # model unspecific helpers, will be included once
     module Helpers

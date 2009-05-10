@@ -47,27 +47,25 @@ on your model, *appropriate routing and redirecting* and *named url helpers*.
 For instance, you can imagine the following code to be added for the @/people@ 
 and @/people/:id@ routes.
 
-<pre>
-<code>
-    # simply add this line
-  
-    rest Person, :renderer => :erb
+<pre><code>
+# simply add this line
 
-    # and this is generated for you
+rest Person, :renderer => :erb
 
-    get '/people' do
-      @people = Person.all
-      erb :"people/index", options
-    end
+# and this is generated for you
 
-    put '/people/:id' do
-      @person = Person.find_by_id(params[:id])
-      redirect url_for_people_show(@person), 'person updated'
-    end
+get '/people' do
+  @people = Person.all
+  erb :"people/index", options
+end
 
-    # further restful routes for Person ...
-</code>
-</pre>
+put '/people/:id' do
+  @person = Person.find_by_id(params[:id])
+  redirect url_for_people_show(@person), 'person updated'
+end
+
+# further restful routes for Person ...
+</code></pre>
 
 That's only half the truth! The routes are generated dynamically, so all 
 defaults can be overridden (the behaviour, after/before callbacks, used renderer, 

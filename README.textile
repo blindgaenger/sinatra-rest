@@ -15,11 +15,11 @@ Guess what!
 
 h2. Usage
 
-Of course you need to require the gem in your sinatra application:
+Of course you need to require the gem in your Sinatra application:
 
   require 'rubygems'
   require 'sinatra'
-  require 'rest'
+  require 'sinatra/rest'
 
 It's very similar to defining routes in Sinatra (@get@, @post@, ...). But this 
 time you don't define the routes by yourself, but use the model's name for 

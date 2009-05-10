@@ -9,17 +9,17 @@ h2. Installation
 
 Guess what!
 
-  sudo gem source --add http://gems.github.com
-  sudo gem install blindgaenger-sinatra-rest
+    sudo gem source --add http://gems.github.com
+    sudo gem install blindgaenger-sinatra-rest
 
 
 h2. Usage
 
 Of course you need to require the gem in your Sinatra application:
 
-  require 'rubygems'
-  require 'sinatra'
-  require 'sinatra/rest'
+    require 'rubygems'
+    require 'sinatra'
+    require 'sinatra/rest'
 
 It's very similar to defining routes in Sinatra (@get@, @post@, ...). But this 
 time you don't define the routes by yourself, but use the model's name for 
@@ -28,8 +28,8 @@ convention.
 For example, if the model's class is called @Person@ you only need to add this 
 line:
 
-  rest Person
-  
+    rest Person
+
 Which will add the following RESTful routes to your application. (Note the 
 pluralization of @Person@ to the @/people/*@ routes.)
 
@@ -49,23 +49,23 @@ and @/people/:id@ routes.
 
 <pre>
 <code>
-  # simply add this line
+    # simply add this line
   
-  rest Person, :renderer => :erb
+    rest Person, :renderer => :erb
 
-  # and this is generated for you
+    # and this is generated for you
 
-  get '/people' do
-    @people = Person.all
-    erb :"people/index", options
-  end
+    get '/people' do
+      @people = Person.all
+      erb :"people/index", options
+    end
 
-  put '/people/:id' do
-    @person = Person.find_by_id(params[:id])
-    redirect url_for_people_show(@person), 'person updated'
-  end
+    put '/people/:id' do
+      @person = Person.find_by_id(params[:id])
+      redirect url_for_people_show(@person), 'person updated'
+    end
 
-  # further restful routes for Person ...
+    # further restful routes for Person ...
 </code>
 </pre>
 

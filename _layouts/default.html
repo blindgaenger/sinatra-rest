@@ -8,8 +8,10 @@
   <meta name="keywords" content="{{ page.title }}{% for tag in page.tags %}, {{ tag }}{% endfor %}, {{ page.author }}" />
   <meta name="description" content="{{ page.subtitle }}" />
   <title>{{ page.title }} &mdash; {{ page.author }}</title>
-  <link rel="stylesheet" href="stylesheets/screen.css" type="text/css" media="screen, projection" />
   <link href="/favicon.ico" rel="shortcut icon" />
+  <style type="text/css">
+  {% include screen.css %}
+  </style>
 </head>
 <body>
   <div id="box">

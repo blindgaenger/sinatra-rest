@@ -1,6 +1,16 @@
 ---
 layout: default
 title: Sinatra-REST
+subtitle: RESTful routes for your Sinatra application
+author: blindgaenger
+homepage: http://blindgaenger.github.com/sinatra-rest/
+date: 2009-07-21
+tags:
+- ruby
+- sinatra
+- rest
+- plugin
+bg: red
 ---
 
 # What is it?

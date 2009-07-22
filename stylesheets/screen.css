@@ -1,7 +1,7 @@
-body {
+html, body {
   background-color: #333333;
   font-family: 'lucida grande','lucida sans unicade',sans-serif;
-  margin: 0.5em;
+  margin: 0;
   padding: 0;
 }
 
@@ -12,24 +12,42 @@ body {
   padding: 1em;
 }
 
-#title * {
-  font-family: 'georgia','bitstream vera serif',serif;
-  font-size: 4em;
-  font-weight: bold;
-  letter-spacing: -6px;
-}
-#title img {
+#logo {
   float: right;
 }
+
+#title, #subtitle {
+  font-family: 'georgia','bitstream vera serif',serif;
+  font-weight: bold;
+  margin: 0.1em 0;
+  color: #4D1818;
+}
+
+#title {
+  font-size: 4em;
+}
+
 #title a, #title a:hover {
   color: #4D1818;
   text-decoration: none;    
-  margin: 1em 0;
+}
+
+#subtitle {
+  font-size: 1.4em;
+  font-style: italic;
+  margin-bottom: 2em;
 }
 
 #content {
   color: #333333;
   font-size: 1.0em;
+}
+
+#footer {
+  color: #cccccc;
+  text-align: center;
+  padding: 1em 0;
+  font-style: italic;
 }
 
 /* code */

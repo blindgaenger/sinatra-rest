@@ -1,10 +1,12 @@
 ---
 layout: default
+foreground: "#4d1818"
+background: "#e8ddda"
 author: blindgaenger
 date: 2009-07-21
+homepage: http://blindgaenger.github.com/sinatra-rest/
 title: Sinatra-REST
 subtitle: RESTful routes for your Sinatra application
-homepage: http://blindgaenger.github.com/sinatra-rest/
 tags:
 - ruby
 - sinatra
@@ -12,13 +14,21 @@ tags:
 - plugin
 ---
 
-# What is it?
+What is it?
+------------
 
 Actually it's a set of templates to introduce [RESTful](http://en.wikipedia.org/wiki/Representational_State_Transfer) 
 routes into [Sinatra](http://www.sinatrarb.com/). The only thing for you to do is to provide the views.
 
+{% highlight ruby %}
+def foo
+  puts 'foo'
+end
+{% endhighlight %}
 
-# Installation
+
+Installation
+------------
 
 Guess what!
 
@@ -26,7 +36,8 @@ Guess what!
     sudo gem install blindgaenger-sinatra-rest
 
 
-# Usage
+Usage
+-----
 
 Of course you need to require the gem in your sinatra application:
 
@@ -127,10 +138,23 @@ So maybe you'd like to do something like this:
 That's it!
 
 
-# Contact
+Contact
+-------
 
 You can contact me via mail at blindgaenger at gmail dot com, or leave me a 
 message on my [Github profile](http://github.com/blindgaenger).
 
+Bernd Jünger (blindgaenger@gmail.com) 
+
+Download
+--------
+
+You can download this project in either zip or tar formats.
+
+You can also clone the project with Git by running:
+
+{% highlight shell %}
+$ git clone git://github.com/blindgaenger/glitter
+{% endhighlight %}
 
 

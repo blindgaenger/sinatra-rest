@@ -10,7 +10,7 @@
   <title>{{ page.title }} &mdash; {{ page.author }}</title>
   <link href="/favicon.ico" rel="shortcut icon" />
   
-  <link rel="stylesheet" href="stylesheets/syntax.css" type="text/css" media="screen, projection" />
+  <link rel="stylesheet" href="stylesheets/{{ page.syntax }}.css" type="text/css" media="screen, projection" />
   <style type="text/css">
   {% include screen.css %}
   </style>
@@ -22,6 +22,7 @@
     <div id="subtitle">{{ page.subtitle }}</div>
     <div id="content">
     {{ content }}
+    {% include contact.html %}
     </div>
   </div>
   <div id="footer">updated on {{ page.date }} by {{ page.author }}</div>

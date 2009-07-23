@@ -1,8 +1,4 @@
 
-{{ page.layout }}
-{{ page.author }}
-{{ page.subtitle }}
-
 html, body {
   background-color: #333333;
   font-family: 'lucida grande','lucida sans unicade',sans-serif;
@@ -15,6 +11,10 @@ html, body {
   margin: 0 auto;
   width: 50em;
   padding: 1em;
+  -moz-border-radius-bottomleft: 1em;
+  -moz-border-radius-bottomright: 1em;
+  -moz-border-radius-topleft: 0;
+  -moz-border-radius-topright: 1em;
 }
 
 #logo {
@@ -26,6 +26,7 @@ html, body {
   font-weight: bold;
   margin: 0.1em 0;
   color: {{ page.foreground }};
+  text-shadow: #a0a0a0 3px 3px 5px;
 }
 
 #title {
@@ -57,31 +58,32 @@ html, body {
 
 /* code */
 
-pre {
-  font-family: "lucida console","monaco","andale mono","bitstream vera sans mono","consolas",monospace;
-  background: {{ page.background }} none repeat scroll 0 0;
-  border: 1px solid #af776c;
-  color: #222222;
-  font-size: 1.0em;
-  line-height: 1.15;
+div.highlight {
+  -moz-border-radius-bottomleft: 1em;
+  -moz-border-radius-bottomright: 1em;
+  -moz-border-radius-topleft: 0;
+  -moz-border-radius-topright: 1em;
+  margin: 0;
   padding: 0.5em;
-}
-pre code {
-  border: none;
+  background-color: {{ page.background }}
 }
 
-p code {
-  background: {{ page.background }} none repeat scroll 0 0;
-  border: 1px solid #af776c;
+span.highlight {
+  -moz-border-radius: 0.4em;
   padding: 0.2em;
   font-size: 90%;
+  background-color: {{ page.background }}
+}
+
+pre, pre code {
+  border: none;
 }
 
 /* links */
 
-a {
+a, a:visited {
   text-decoration: none;
-  color: #802C25;
+  color: {{ page.foreground }};
 }
 a:hover {
   text-decoration: underline;

@@ -1,12 +1,13 @@
 ---
 layout: default
-foreground: "#4d1818"
-background: "#e8ddda"
+syntax: default
+foreground: "#3465A4"
+background: "#EAF2F5"
 author: blindgaenger
 date: 2009-07-21
-homepage: http://blindgaenger.github.com/sinatra-rest/
-title: Sinatra-REST
-subtitle: RESTful routes for your Sinatra application
+homepage: http://blindgaenger.github.com/glitter
+title: glitter
+subtitle: Git-Like Interface for Twitter.
 tags:
 - ruby
 - sinatra
@@ -17,143 +18,86 @@ tags:
 What is it?
 ------------
 
-Actually it's a set of templates to introduce [RESTful](http://en.wikipedia.org/wiki/Representational_State_Transfer) 
-routes into [Sinatra](http://www.sinatrarb.com/). The only thing for you to do is to provide the views.
+The idea is to think about [Twitter](http://www.twitter.com/) as a 
+[Git](http://git-scm.com/) repository. So you can commit your status and view 
+your friends commits in the log. Just for fun to see how far this can go!
 
-{% highlight ruby %}
-def foo
-  puts 'foo'
-end
+At first you have to init your repo (resp. register glitter with your twitter 
+account). This has to be done only once, just follow the on-screen instructions. 
+
+{% highlight bash %}
+$ glitter init
 {% endhighlight %}
+
+Now look what other committers did (resp. show the other's tweets).
+
+{% highlight bash %}
+$ glitter log
+commit 2799873378
+Author: codinghorror <Jeff Atwood>
+Date:   Thu Jul 23 15:29:12 +0000 2009
+
+    reminder: anyone who would like to beta test http://superuser.com , password
+    is here http://is.gd/1J0yR
+
+commit 2799553049
+Author: TechCrunch <Michael Arrington>
+Date:   Thu Jul 23 15:09:52 +0000 2009
+
+    The Song of the PowerSquid: The Inside Story of the Life of an Invention 
+    http://tcrn.ch/NuB by Guest Author
+
+commit 2799436673
+Author: olabini <Ola Bini>
+Date:   Thu Jul 23 15:02:53 +0000 2009
+
+    SUCCESS. Switching from Jacc to Jay removed another bottleneck. Yecht is now
+    about 5% faster than Syck and JvYAMLb.
+
+{% endhighlight %}
+
+Or commit something (post your status to twitter).
+
+{% highlight bash %}
+$ glitter commit -m "command line fun with #glitter on #twitter"
+{% endhighlight %}
+
+As you can see there is no need to stage <span class="highlight">$ git add .</span>
+something for now. But if you've an idea what it could be used for, let me know! 
 
 
 Installation
 ------------
 
-Guess what!
+Currently this is a little tricky and non standard. Because I had to change some 
+libraries to get things done, glitter depends on two submodules until the 
+changes will be merged.
 
-    sudo gem source --add http://gems.github.com
-    sudo gem install blindgaenger-sinatra-rest
+The first change is to rely on a fork of the twitter gem, because currently the 
+gem does not support OAuth 1.0a, which was just updated by twitter.
 
+The other submodule is my own fork of GLI, which is a library by 
+[davetron5000](http://davetron5000.github.com/) to build the Git like command 
+line interfaces. Nice!
 
-Usage
------
+{% highlight bash %}
+$ git clone git://github.com/blindgaenger/glitter.git
+$ git submodule init
+$ git submodule update
+{% endhighlight %}
 
-Of course you need to require the gem in your sinatra application:
+Now you have your own copy of glitter. When I resolved the dependencies I'll 
+assemble a gem. Promised! 
 
-    require 'sinatra'
-    require 'sinatra/rest'
-
-It's very similar to defining routes in Sinatra (`get`, `post`, ...). But this 
-time you don't define the routes by yourself, but use the model's name for 
-convention.
-
-For example, if the model's class is called `Person` you only need to add this 
-line:
-
-    rest Person
-
-Which will add the following RESTful routes to your application. (Note the 
-pluralization of `Person` to the `/people/*` routes.)
-
-<table>
-  <thead>
-    <tr>
-      <th>Verb</th>
-      <th>Route</th>        
-      <th>Controller</th>
-      <th>View</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>GET</td>
-      <td>/people</td>
-      <td>index</td>
-      <td>/people/index.haml</td>
-    </tr>
-    <tr>
-      <td>GET</td>
-      <td>/people/new</td>
-      <td>new</td>
-      <td>/people/new.haml</td>
-    </tr>
-    <tr>
-      <td>POST</td>
-      <td>/people</td>
-      <td>create</td>
-      <td>&rarr; redirect to show</td>
-    </tr>
-    <tr>
-      <td>GET</td>
-      <td>/people/1</td>
-      <td>show</td>
-      <td>/people/show.haml</td>
-    </tr>
-    <tr>
-      <td>GET</td>
-      <td>/people/1/edit</td>
-      <td>edit</td>
-      <td>/people/edit.haml</td>
-    </tr>
-    <tr>
-      <td>PUT</td>
-      <td>/people/1</td>
-      <td>update</td>
-      <td>&rarr; redirect to show</td>
-    </tr>
-    <tr>
-      <td>DELETE</td>
-      <td>/people/1</td>
-      <td>destroy</td>
-      <td>&rarr; redirect to index</td>
-    </tr>
-  </tbody>
-</table>
-
-As you can see, each route is also associated with a named code block in the 
-controller. The controller does the minimum to make the routes work. Based on 
-the route it treates the model and redirects or renders the expected view.
-
-So imagine the following steps to show a single person:
-
-1. request from the client's browser<br/>
-   `GET http://localhost:4567/people/99`
-2. Find and set `@person` in the controller<br/>
-   `@person = Person.find_by_id(99)`
-3. render the view to show `@person`<br/>
-   `render VIEW_DIR/people/show.haml`
-
-It's up to you to provide the views, because this goes beyond the restful 
-routing. The variable `@person` is correctly named and injected into the view. 
-So maybe you'd like to do something like this:
-
-    <html>
-    <body>
-      <div>ID: <%= @person.id %></div>
-      <div>Name: <%= @person.name %></div>
-    </body>
-    </html>
-
-That's it!
-
-
-Contact
--------
-
-You can contact me via mail at blindgaenger at gmail dot com, or leave me a 
-message on my [Github profile](http://github.com/blindgaenger).
-
-Bernd Jünger (blindgaenger@gmail.com) 
 
 Download
 --------
 
-You can download this project in either zip or tar formats.
+You can download this project in either [zip]({{ page.homepage }}/zipball/master) 
+or [tar]({{ page.homepage }}/tarball/master) formats. Or you can also clone the 
+project with Git by running:
 
-You can also clone the project with Git by running:
-
-{% highlight shell %}
+{% highlight bash %}
 $ git clone git://github.com/blindgaenger/glitter
 {% endhighlight %}
 

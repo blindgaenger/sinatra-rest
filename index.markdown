@@ -1,8 +1,9 @@
 ---
 layout: default
-syntax: default
+syntax: tango
 foreground: "#E627A6"
-background: "#F8D4F8"
+#background: "#FFD4FF"
+background: "#000000"
 author: blindgaenger
 date: 2009-07-21
 homepage: http://blindgaenger.github.com/glitter

@@ -1,13 +1,13 @@
 ---
 layout: default
 syntax: default
-foreground: "#3465A4"
-background: "#EAF2F5"
+foreground: "#E627A6"
+background: "#F8D4F8"
 author: blindgaenger
 date: 2009-07-21
 homepage: http://blindgaenger.github.com/glitter
 title: glitter
-subtitle: Git-Like Interface for Twitter.
+subtitle: Git-Like Interface for Twitter
 tags:
 - ruby
 - sinatra
@@ -66,15 +66,27 @@ As you can see there is no need to stage <span class="highlight">$ git add .</sp
 something for now. But if you've an idea what it could be used for, let me know! 
 
 
+Download
+--------
+
+You can download this project in either [zip]({{ page.homepage }}/zipball/master) 
+or [tar]({{ page.homepage }}/tarball/master) formats. Or you can also clone the 
+project with Git by running:
+
+{% highlight bash %}
+$ git clone git://github.com/blindgaenger/glitter
+{% endhighlight %}
+
+
 Installation
 ------------
 
 Currently this is a little tricky and non standard. Because I had to change some 
-libraries to get things done, glitter depends on two submodules until the 
+libraries to get things done. Therefore glitter depends on two submodules until the 
 changes will be merged.
 
-The first change is to rely on a fork of the twitter gem, because currently the 
-gem does not support OAuth 1.0a, which was just updated by twitter.
+The first change is to rely on a fork of the [twitter gem](http://github.com/jnunemaker/twitter).
+Because Twitter updated to OAuth 1.0a, but the gem doesn't support this yet.
 
 The other submodule is my own fork of GLI, which is a library by 
 [davetron5000](http://davetron5000.github.com/) to build the Git like command 
@@ -88,17 +100,5 @@ $ git submodule update
 
 Now you have your own copy of glitter. When I resolved the dependencies I'll 
 assemble a gem. Promised! 
-
-
-Download
---------
-
-You can download this project in either [zip]({{ page.homepage }}/zipball/master) 
-or [tar]({{ page.homepage }}/tarball/master) formats. Or you can also clone the 
-project with Git by running:
-
-{% highlight bash %}
-$ git clone git://github.com/blindgaenger/glitter
-{% endhighlight %}
 
 

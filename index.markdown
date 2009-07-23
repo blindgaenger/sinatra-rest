@@ -10,10 +10,11 @@ homepage: http://blindgaenger.github.com/glitter
 title: glitter
 subtitle: Git-Like Interface for Twitter
 tags:
+- git
+- twitter
+- command line
+- cli
 - ruby
-- sinatra
-- rest
-- plugin
 ---
 
 What is it?

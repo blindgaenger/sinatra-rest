@@ -65,14 +65,15 @@ div.highlight {
   -moz-border-radius-topright: 1em;
   margin: 0;
   padding: 0.5em;
-  background-color: {{ page.background }}
+  background-color: {{ page.background }};
+  font-size: 1.1em;
 }
 
 span.highlight {
   -moz-border-radius: 0.4em;
   padding: 0.2em;
   font-size: 90%;
-  background-color: {{ page.background }}
+  background-color: {{ page.background }};
 }
 
 pre, pre code {

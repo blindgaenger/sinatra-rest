@@ -7,6 +7,7 @@ background: "#000000"
 author: blindgaenger
 date: 2009-07-23
 homepage: http://blindgaenger.github.com/glitter
+github: http://github.com/blindgaenger/glitter
 title: glitter
 subtitle: Git-Like Interface for Twitter
 tags:

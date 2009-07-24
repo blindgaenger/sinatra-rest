@@ -1,25 +1,31 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
- 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-  <title>{{ page.title }}</title>
-  <meta name="author" content="blindgaenger" />
-  <link rel="stylesheet" href="stylesheets/screen.css" type="text/css" media="screen, projection" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <meta name="author" content="{{ page.author }}" />
+  <meta name="keywords" content="{{ page.title }}{% for tag in page.tags %}, {{ tag }}{% endfor %}, {{ page.author }}" />
+  <meta name="description" content="{{ page.subtitle }}" />
+  <title>{{ page.title }} &mdash; {{ page.author }}</title>
+  <link href="/favicon.ico" rel="shortcut icon" />
+  
+  <link rel="stylesheet" href="stylesheets/{{ page.syntax }}.css" type="text/css" media="screen, projection" />
+  <style type="text/css">
+  {% include screen.css %}
+  </style>
 </head>
 <body>
   <div id="box">
-    <div id="title">
-      <img src="images/logo.png" alt="Sinatra-REST logo" />
-      <a href="http://blindgaenger.github.com/sinatra-rest/" alt="Sinatra-REST Home">{{ page.title }}</a>
-    </div>
+    <img id="logo" src="images/logo.png" alt="{{ page.title }}" />
+    <h1 id="title"><a href="{{ page.homepage }}" alt="Homepage">{{ page.title }}</a></h1>
+    <div id="subtitle">{{ page.subtitle }}</div>
     <div id="content">
     {{ content }}
+    {% include contact.html %}
     </div>
   </div>
-  <div id="ribbon">
-    <a href="http://github.com/blindgaenger/sinatra-rest"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png" alt="Fork me on GitHub" /></a>
-  </div>
+  <div id="footer">updated on {{ page.date }} by {{ page.author }}</div>
+  <a href="{{ page.homepage }}"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png" alt="Fork me on GitHub" /></a>
 </body>
 </html>

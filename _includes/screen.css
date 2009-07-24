@@ -1,0 +1,110 @@
+
+html, body {
+  background-color: #333333;
+  font-family: 'lucida grande','lucida sans unicade',sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+#box {
+  background-color: #fff;
+  margin: 0 auto;
+  width: 50em;
+  padding: 1em;
+  -moz-border-radius-bottomleft: 1em;
+  -moz-border-radius-bottomright: 1em;
+  -moz-border-radius-topleft: 0;
+  -moz-border-radius-topright: 1em;
+}
+
+#logo {
+  float: right;
+}
+
+#title, #subtitle {
+  font-family: 'georgia','bitstream vera serif',serif;
+  font-weight: bold;
+  margin: 0.1em 0;
+  color: {{ page.foreground }};
+  text-shadow: #a0a0a0 3px 3px 5px;
+}
+
+#title {
+  font-size: 4em;
+}
+
+#title a, #title a:hover {
+  color: {{ page.foreground }};
+  text-decoration: none;    
+}
+
+#subtitle {
+  font-size: 1.4em;
+  font-style: italic;
+  margin-bottom: 2em;
+}
+
+#content {
+  color: #333333;
+  font-size: 1.0em;
+}
+
+#footer {
+  color: #cccccc;
+  text-align: center;
+  padding: 1em 0;
+  font-style: italic;
+}
+
+/* code */
+
+div.highlight {
+  -moz-border-radius-bottomleft: 1em;
+  -moz-border-radius-bottomright: 1em;
+  -moz-border-radius-topleft: 0;
+  -moz-border-radius-topright: 1em;
+  margin: 0;
+  padding: 0.5em;
+  background-color: {{ page.background }};
+  font-size: 1.1em;
+}
+
+span.highlight {
+  -moz-border-radius: 0.4em;
+  padding: 0.2em;
+  font-size: 90%;
+  background-color: {{ page.background }};
+}
+
+pre, pre code {
+  border: none;
+}
+
+/* links */
+
+a, a:visited {
+  text-decoration: none;
+  color: {{ page.foreground }};
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* tables */
+
+table {
+  font-family: "lucida console","monaco","andale mono","bitstream vera sans mono","consolas",monospace;
+  border: 1px solid #af776c;
+  border-collapse: collapse;
+}
+th {
+  background-color: {{ page.background }};
+}
+td {
+  border-top: 1px solid #af776c;
+}
+table, tr, th, td {
+  padding: 0.5em;
+  font-size: 0.9em;
+}
+

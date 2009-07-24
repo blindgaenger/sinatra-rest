@@ -6,6 +6,7 @@ background: "#e8ddda"
 author: blindgaenger
 date: 2009-07-24
 homepage: http://blindgaenger.github.com/sinatra-rest/
+github: http://github.com/blindgaenger/sinatra-rest
 title: Sinatra-REST
 subtitle: RESTful routes for Sinatra applications
 tags:

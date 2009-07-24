@@ -1,40 +1,54 @@
 ---
 layout: default
+syntax: default
+foreground: "#4d1818"
+background: "#e8ddda"
+author: blindgaenger
+date: 2009-07-24
+homepage: http://blindgaenger.github.com/sinatra-rest/
 title: Sinatra-REST
+subtitle: RESTful routes for Sinatra applications
+tags:
+- sinatra
+- rest
+- ruby
+- restful
+- model
+- ActiveRecord
+- DataMapper
+- Stone
 ---
 
-# What is it?
+What is it?
+-----------
 
 Actually it's a set of templates to introduce [RESTful](http://en.wikipedia.org/wiki/Representational_State_Transfer) 
-routes into [Sinatra](http://www.sinatrarb.com/). The only thing for you to do is to provide the views.
-
-
-# Installation
-
-Guess what!
-
-    sudo gem source --add http://gems.github.com
-    sudo gem install blindgaenger-sinatra-rest
-
-
-# Usage
+routes into [Sinatra](http://www.sinatrarb.com/). The only thing for you to do 
+is to provide the views. Automatically works nicely for models based on 
+ActiveRecord, DataMapper, or Stone.
 
 Of course you need to require the gem in your sinatra application:
 
-    require 'sinatra'
-    require 'sinatra/rest'
+{% highlight ruby %}
+require 'sinatra'
+require 'sinatra/rest'
+{% endhighlight %}
 
-It's very similar to defining routes in Sinatra (`get`, `post`, ...). But this 
-time you don't define the routes by yourself, but use the model's name for 
-convention.
 
-For example, if the model's class is called `Person` you only need to add this 
-line:
+I'm sure you know how to defining routes in Sinatra (<span class="highlight">get</span>,
+<span class="highlight">post</span>, ...). But this time you let the model's name 
+define the routes by convention.
 
-    rest Person
+For example, if your model's class is called <span class="highlight">Person</span>
+you only need to add this line:
+
+{% highlight ruby %}
+rest Person
+{% endhighlight %}
 
 Which will add the following RESTful routes to your application. (Note the 
-pluralization of `Person` to the `/people/*` routes.)
+pluralization of <span class="highlight">Person</span> to the 
+<span class="highlight">/people/*</span> routes.)
 
 <table>
   <thead>
@@ -105,23 +119,34 @@ So imagine the following steps to show a single person:
    `render VIEW_DIR/people/show.haml`
 
 It's up to you to provide the views, because this goes beyond the restful 
-routing. The variable `@person` is correctly named and injected into the view. 
-So maybe you'd like to do something like this:
+routing. The variable <span class="highlight">@person</span> is correctly named 
+and injected into the view. So maybe you'd like to do something like this:
 
-    <html>
-    <body>
-      <div>ID: <%= @person.id %></div>
-      <div>Name: <%= @person.name %></div>
-    </body>
-    </html>
+{% highlight erb %}
+<html>
+<body>
+  <div>ID: <%= @person.id %></div>
+  <div>Name: <%= @person.name %></div>
+</body>
+</html>
+{% endhighlight %}
 
 That's it!
 
 
-# Contact
+Installation
+------------
 
-You can contact me via mail at blindgaenger at gmail dot com, or leave me a 
-message on my [Github profile](http://github.com/blindgaenger).
+Guess what!
 
+{% highlight bash %}
+$ sudo gem source --add http://gems.github.com
+$ sudo gem install blindgaenger-sinatra-rest
+{% endhighlight %}
 
+Or clone of course:
+
+{% highlight bash %}
+$ git clone git://github.com/blindgaenger/sinatra-rest.git
+{% endhighlight %}
 

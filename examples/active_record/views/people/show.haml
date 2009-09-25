@@ -1,0 +1,20 @@
+%h1 Show
+
+%table
+  %tr
+    %th Name
+    %th Value
+  %tr
+    %td id
+    %td= @person.id
+  %tr
+    %td Name
+    %td= @person.name
+
+.buttons
+  %a{:href => url_for_people_index} « Index
+  %a{:href => url_for_people_edit(@person)} Edit
+  %form{:action=>url_for_people_update(@person), :method=>"post"}
+    %input{:type=>"hidden", :name=>"_method", :value=>"delete"}
+    %button{:type => :submit} Delete
+  

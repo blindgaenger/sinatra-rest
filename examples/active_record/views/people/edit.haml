@@ -1,0 +1,9 @@
+%h1 Edit
+
+%form{:action=>url_for_people_update(@person), :method=>"post"}
+  %input{:type=>"hidden", :name=>"_method", :value=>"put"}
+  Name: 
+  %input{:name=>"name", :value=>@person.name}
+  .buttons
+    %a{:href => url_for_people_show(@person)} Cancel
+    %button{:type => :submit} Update

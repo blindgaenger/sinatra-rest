@@ -1,0 +1,11 @@
+%h1 Index
+
+%ul
+  - @people.each do |person|
+    %li
+      = person.id
+      %a{:href => url_for_people_show(person)}
+        = person.name
+
+.buttons
+  %a{:href => url_for_people_new} New

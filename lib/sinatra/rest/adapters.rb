@@ -25,10 +25,13 @@ module DataMapper
 end
 
 module ActiveRecord
-  module Base
-    def find_by_id(id)
-      first(id)
+  class Base
+    class << self
+      def find_by_id(id)
+        find(id)
+      end
     end
   end
 end
+
 

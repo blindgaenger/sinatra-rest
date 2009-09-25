@@ -29,11 +29,13 @@ end
 # sets rest in a sinatra instance
 # and returns the block's result, if a block is given
 def mock_rest(model, options={}, &block)
-  mock_app {
+  mock_app do
     rest model, options
-  }
-  instance = @app.new
-  instance.instance_eval(&block) if block_given?
+
+    self.new.instance_eval do
+      @app.instance_eval(&block) if block_given?
+    end
+  end
 end
 
 

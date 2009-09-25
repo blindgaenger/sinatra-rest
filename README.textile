@@ -74,6 +74,10 @@ which routes are added).
 For more details and options, please have a look at the pages in the  
 "Sinatra-REST Wiki":http://github.com/blindgaenger/sinatra-rest/wikis on Github.
 
+h2. Links
+
+* "Documentation @ rdoc.info":http://rdoc.info/projects/blindgaenger/sinatra-rest
+* "Continuous Integration @ RunCodeRun":http://runcoderun.com/blindgaenger/sinatra-rest
 
 h2. Contact
 

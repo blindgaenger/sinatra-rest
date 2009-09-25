@@ -76,8 +76,11 @@ For more details and options, please have a look at the pages in the
 
 h2. Links
 
+* "Homepage @ GitHub Pages":http://blindgaenger.github.com/sinatra-rest/
+* "Source Code @ GitHub":http://blindgaenger.github.com/sinatra-rest/
 * "Documentation @ rdoc.info":http://rdoc.info/projects/blindgaenger/sinatra-rest
 * "Continuous Integration @ RunCodeRun":http://runcoderun.com/blindgaenger/sinatra-rest
+* "Gem hosting @ Gemcutter":http://gemcutter.org/gems/sinatra-rest
 
 h2. Contact
 

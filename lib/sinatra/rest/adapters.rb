@@ -34,4 +34,15 @@ module ActiveRecord
   end
 end
 
+module Ohm
+  module Model
+    def find_by_id(id)
+      self[id]
+    end
+    
+    def delete(id)
+      self[id].delete
+    end
+  end
+end
 
